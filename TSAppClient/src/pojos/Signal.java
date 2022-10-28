@@ -22,6 +22,11 @@ public class Signal {
         return signalId;
     }
 
+    public Signal() {
+    }
+    
+    
+
     public int[] getECG_values() {
         return ECG_values;
     }
@@ -57,9 +62,18 @@ public class Signal {
     public void setSname(String sname) {
         this.sname = sname;
     }
-
+    
+    
     @Override
     public String toString() {
+        System.out.println("ECG");
+        for (int i=0; i<ECG_values.length; i++){
+            System.out.println(ECG_values[i]);
+        } 
+        System.out.println("EMG");
+        for (int i=0; i<EMG_values.length; i++){
+            System.out.println(EMG_values[i]);
+        } 
         return "Signal{" + "signalId=" + signalId + ", ECG_values=" + ECG_values + ", EMG_values=" + EMG_values + ", startDate=" + startDate + ", sname=" + sname + '}';
     }
     

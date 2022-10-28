@@ -20,7 +20,7 @@ import pojos.Signal;
  * @author agarc
  */
 public class Menu {
-    public Signal recordSignal (String name){
+    public static Signal recordSignal (String name){
         Frame[] frame;
         BITalino bitalino = null;
         Signal s = new Signal();

@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pojos.*;
+import utilities.*;
 
 /**
  *
@@ -45,25 +47,25 @@ public class CommunicationWithServer {
         printWriter.println(signal.toString());
     }
     
-    public static boolean exitFromServer(OutputStream outputStream, Socket socket) {
+    public static boolean exitFromServer(PrintWriter printWriter, Socket socket) {
         try {
-            try {
-                outputStream.close();
-            } catch (IOException ex) {
+            //try {
+                printWriter.close();
+           /* } catch (IOException ex) {
                 Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
             socket.close();
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
-    /*
+    
     public static void main(String args[]) throws IOException {
         System.out.println("Starting Client...");
         Socket socket = new Socket("localhost", 9009);
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-        Integer medical_card_number = 0;
+        /*Integer medical_card_number = 0;
         String name = "paquito";
         String surname = "perez";
         Date dob = new Date(2001, 01, 01);
@@ -75,13 +77,20 @@ public class CommunicationWithServer {
         Integer userId = 1;
         String macAddress = "dzgbihfgbihb";
         Patient p = new Patient(medical_card_number, name, surname, dob, address,  email,  diagnosis,  allergies,  gender,  userId,  macAddress);
-        printWriter.println(p.toString());
+        */
+        String name = "First signal";
+        Signal s = new Signal();
+        s = Menu.recordSignal(name);
+        String ecg = Arrays.toString(s.getECG_values());
+        String emg = Arrays.toString(s.getEMG_values());
+        printWriter.println(ecg);
+        printWriter.println(emg);
         System.out.println("Connection established... sending text");
         printWriter.println("Header File\n\n");
         printWriter.println("Stop");
-        releaseResources(printWriter, socket);
+        exitFromServer(printWriter, socket);
         System.exit(0);
-    }*/
+    }
     
     }
 
