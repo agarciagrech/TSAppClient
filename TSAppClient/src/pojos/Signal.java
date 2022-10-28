@@ -17,4 +17,50 @@ public class Signal {
     private int[] EMG_values;
     private Date startDate;
     private String sname;
+
+    public Integer getSignalId() {
+        return signalId;
+    }
+
+    public int[] getECG_values() {
+        return ECG_values;
+    }
+
+    public int[] getEMG_values() {
+        return EMG_values;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSignalId(Integer signalId) {
+        this.signalId = signalId;
+    }
+
+    public void setECG_values(int[] ECG_values) {
+        this.ECG_values = ECG_values;
+    }
+
+    public void setEMG_values(int[] EMG_values) {
+        this.EMG_values = EMG_values;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+
+    @Override
+    public String toString() {
+        return "Signal{" + "signalId=" + signalId + ", ECG_values=" + ECG_values + ", EMG_values=" + EMG_values + ", startDate=" + startDate + ", sname=" + sname + '}';
+    }
+    
 }
