@@ -24,6 +24,7 @@ public class CommunicationWithServer {
     
     public static Socket connectToServer() {
         Socket socket1 = new Socket();
+        /*
         try {
             //String[] datos = getDataFromFile();
             //in datos[1] we have the number of the port whereas in datos[0] the ip address
@@ -32,6 +33,7 @@ public class CommunicationWithServer {
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
         return socket1;
     }
     
