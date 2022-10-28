@@ -12,6 +12,7 @@ import java.util.Date;
  *
  * @author agarc
  */
+
 public class Patient implements Serializable{
     private static final long serialVersionUID = -1156840724257282729L;
     
@@ -28,6 +29,10 @@ public class Patient implements Serializable{
     private Integer userId;
     private String macAddress; 
 
+    public Patient() {
+    }
+
+    
     public Patient(Integer medical_card_number, String name, String surname, Date dob, String address, String email, String diagnosis, String allergies, String gender, Integer userId, String macAddress) {
         this.medical_card_number = medical_card_number;
         this.name = name;
