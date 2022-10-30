@@ -9,10 +9,18 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.BitalinoDemo;
 import BITalino.Frame;
+import java.rmi.NotBoundException;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Scanner;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
+import pojos.Patient;
 import pojos.Signal;
 
 /**
@@ -20,6 +28,8 @@ import pojos.Signal;
  * @author agarc
  */
 public class Menu {
+    private static Scanner sc = new Scanner(System.in);
+    
     public static Signal recordSignal (String name){
         Frame[] frame;
         BITalino bitalino = null;
@@ -85,6 +95,86 @@ public class Menu {
             }
         }
        return s; 
+    }
+    
+    public static Patient sendPatient(){
+        sc = new Scanner (System.in);
+        Patient p = new Patient();
+
+        System.out.println("Please, input the patient info:");
+        System.out.print("Name: "); 
+        String name = sc.next();
+        p.setName(name);
+        System.out.print("Surname: "); 
+        String surname = sc.next();
+        p.setSurname(surname);
+        System.out.print("Medical card number: "); 
+        
+        Integer medCardNumber = sc.nextInt();     
+        p.setMedical_card_number(medCardNumber);
+
+        System.out.print("Gender: ");
+        String gender = sc.next();   
+        if (gender.equalsIgnoreCase("male")) {
+            gender = "Male";
+        } else {
+            gender = "Female";
+        }
+        p.setGender(gender);
+
+
+        System.out.print("Date of birth [yyyy-mm-dd]: ");	
+        String birthdate = sc.next();
+        Date bdate; 
+        try {
+            bdate = Date.valueOf(birthdate);
+            if (bdate.before(Date.valueOf(LocalDate.now())) || bdate.equals(Date.valueOf(LocalDate.now()))) {
+                    p.setDob(bdate);
+            } else {
+                    do {
+                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");
+                            birthdate = sc.next();
+                            bdate = Date.valueOf(birthdate);
+                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
+                    p.setDob(bdate);
+            }
+        } catch (Exception e) {
+            int b=0;
+            do {
+                    try {	
+                            System.out.print("Please introduce a valid date format [yyyy-mm-dd]: ");
+                            birthdate = sc.next();
+                            bdate = Date.valueOf(birthdate); 
+
+                            if (bdate.before(Date.valueOf(LocalDate.now())) || bdate.equals(Date.valueOf(LocalDate.now()))) {
+                                    p.setDob(bdate);
+                            } else {
+                                    do {
+                                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");							
+                                            birthdate = sc.next();
+                                            bdate = Date.valueOf(birthdate);
+                                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
+                                    p.setDob(bdate);
+                            }
+                            b=1;
+                    } catch (Exception e1) {
+                    }
+            } while (b==0);
+        }
+
+        System.out.print("Address: ");				
+        String address = sc.next();
+        p.setAddress(address);
+
+        System.out.print("Email:: ");				
+        String email = sc.next();
+        p.setEmail(email);
+        
+        return p;
+    }
+    
+    public void recievePatient(){
+        
     }
     
 }

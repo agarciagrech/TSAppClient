@@ -5,6 +5,7 @@
  */
 package utilities;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -63,6 +64,31 @@ public class CommunicationWithServer {
         return false;
     }
     
+    public static boolean recievePatient(BufferedReader bufferReader){
+        boolean recieved = true; 
+        Patient p1 = new Patient();
+        try{
+            String [] pData = new String[200];
+            String line = bufferReader.readLine();
+            //Ver como se cogen los datos de la consola y meterlos en line, después ir asociándolos a pData.
+            
+            p1.setMedical_card_number(Integer.parseInt(pData[0]));
+            p1.setName(pData[1]);
+            p1.setSurname(pData[2]);
+            //p1.setDob(pData[3]); //convertir string en date
+            p1.setAddress(pData[4]);
+            p1.setEmail(pData[5]);
+            p1.setDiagnosis(pData[6]);
+            p1.setAllergies(pData[7]);
+            p1.setGender(pData[8]);
+            p1.setUserId(Integer.parseInt(pData[9]));
+            p1.setMacAddress(pData[10]);
+        }catch(IOException exception){
+            recieved = false;
+        }
+        return recieved; 
+    }
+    
     public static void main(String args[]) throws IOException {
         System.out.println("Starting Client...");
         Socket socket = new Socket("localhost", 9009);
@@ -82,9 +108,11 @@ public class CommunicationWithServer {
         */
         String name = "First signal";
         Signal s = new Signal();
+        Patient p = Menu.sendPatient();
         s = Menu.recordSignal(name);
         String ecg = Arrays.toString(s.getECG_values());
         String emg = Arrays.toString(s.getEMG_values());
+        printWriter.println(p.toString());
         printWriter.println(ecg);
         printWriter.println(emg);
         System.out.println("Connection established... sending text");
