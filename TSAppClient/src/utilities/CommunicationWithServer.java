@@ -93,7 +93,7 @@ public class CommunicationWithServer {
         System.out.println("Starting Client...");
         Socket socket = new Socket("localhost", 9009);
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-        /*Integer medical_card_number = 0;
+        Integer medical_card_number = 0;
         String name = "paquito";
         String surname = "perez";
         Date dob = new Date(2001, 01, 01);
@@ -105,7 +105,8 @@ public class CommunicationWithServer {
         Integer userId = 1;
         String macAddress = "dzgbihfgbihb";
         Patient p = new Patient(medical_card_number, name, surname, dob, address,  email,  diagnosis,  allergies,  gender,  userId,  macAddress);
-        */
+        
+        /*
         String name = "First signal";
         Signal s = new Signal();
         Patient p = Menu.sendPatient();
@@ -115,8 +116,9 @@ public class CommunicationWithServer {
         printWriter.println(p.toString());
         printWriter.println(ecg);
         printWriter.println(emg);
+*/
+        sendPatient(printWriter,p);
         System.out.println("Connection established... sending text");
-        printWriter.println("Header File\n\n");
         printWriter.println("Stop");
         exitFromServer(printWriter, socket);
         System.exit(0);
