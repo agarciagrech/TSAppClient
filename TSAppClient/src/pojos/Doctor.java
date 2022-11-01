@@ -16,6 +16,9 @@ public class Doctor {
     private String demail;
     private Integer userId;
 
+    public Doctor() {
+    }
+
     public Doctor(Integer doctorId, String dname, String dsurname, String demail, Integer userId) {
         this.doctorId = doctorId;
         this.dname = dname;

@@ -6,6 +6,7 @@
 package pojos;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -134,10 +135,15 @@ public class Patient implements Serializable{
     public void setMacAddress(String macAddress) {
         this.macAddress = macAddress;
     }
+    
+    public String formatDate (Date dob){
+        SimpleDateFormat  formato = new SimpleDateFormat("dd/MM/yyyy");
+        return formato.format(dob);
+    }
 
     @Override
     public String toString() {
-        return "Patient{" + "medical_card_number=" + medical_card_number + ", name=" + name + ", surname=" + surname + ", dob=" + dob + ", address=" + address + ", email=" + email + ", diagnosis=" + diagnosis + ", allergies=" + allergies + ", gender=" + gender + ", userId=" + userId + ", macAddress=" + macAddress + '}';
+        return "Patient{" + "medical_card_number=" + medical_card_number + ", name=" + name + ", surname=" + surname + ", dob=" + formatDate(dob) + ", address=" + address + ", email=" + email + ", diagnosis=" + diagnosis + ", allergies=" + allergies + ", gender=" + gender + ", userId=" + userId + ", macAddress=" + macAddress + '}';
     }
     
     

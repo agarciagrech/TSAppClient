@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.rmi.NotBoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
@@ -64,31 +67,99 @@ public class CommunicationWithServer {
         return false;
     }
     
+   
+    
     public static boolean recievePatient(BufferedReader bufferReader){
         boolean recieved = true; 
-        Patient p1 = new Patient();
+        Patient p = new Patient();
         try{
-            String [] pData = new String[200];
             String line = bufferReader.readLine();
-            //Ver como se cogen los datos de la consola y meterlos en line, después ir asociándolos a pData.
-            
-            p1.setMedical_card_number(Integer.parseInt(pData[0]));
-            p1.setName(pData[1]);
-            p1.setSurname(pData[2]);
-            //p1.setDob(pData[3]); //convertir string en date
-            p1.setAddress(pData[4]);
-            p1.setEmail(pData[5]);
-            p1.setDiagnosis(pData[6]);
-            p1.setAllergies(pData[7]);
-            p1.setGender(pData[8]);
-            p1.setUserId(Integer.parseInt(pData[9]));
-            p1.setMacAddress(pData[10]);
+            line=line.replace("{", "");
+            line=line.replace("Patient", "");
+            String[] atribute = line.split(",");
+            SimpleDateFormat  format = new SimpleDateFormat("dd/MM/yyyy"); 
+        
+            for (int i =0;i <atribute.length; i++){
+                String[] data2 = atribute[i].split("=");
+                for (int j =0;j <data2.length - 1; j++){
+                    data2[j]=data2[j].replace(" ", "");
+                    switch(data2[j]){
+                        case "medical_card_number": p.setMedical_card_number(Integer.parseInt(data2[j+1]));
+                                                     break;
+                        case "name":p.setName(data2[j+1]); 
+                                     break;
+                        case "surname":  p.setSurname(data2[j+1]);
+                                        break;
+                         case "dob": 
+                            try{
+                               p.setDob(format.parse(data2[j+1]));
+                            }catch(ParseException ex){
+                                
+                            }
+                                     break;
+                        case "address": p.setAddress(data2[j+1]);
+                                        break;
+                        case "email": p.setEmail(data2[j+1]);
+                                     break;
+                        case "diagnosis": p.setDiagnosis(data2[j+1]);
+                                         break;
+                        case "allergies":  p.setAllergies(data2[j+1]);
+                                        break;
+                        case "gender": p.setGender(data2[j+1]);
+                                        break;
+                        case "userId": p.setUserId(Integer.parseInt(data2[j+1]));
+                                        break;
+                        case "macAddress": p.setMacAddress(data2[j+1]);
+                                         break;
+                    }
+ 
+                }
+                
+             }
+        System.out.println("Patient recieved:");
+        System.out.println(p.toString());
+        
+        
         }catch(IOException exception){
             recieved = false;
         }
         return recieved; 
     }
-    
+        public static boolean recieveDoctor(BufferedReader bufferReader){
+        boolean recieved = true; 
+        Doctor d= new Doctor();
+        try{
+            String line = bufferReader.readLine();
+            line=line.replace("{", "");
+            line=line.replace("Patient", "");
+            String[] atribute = line.split(",");
+            for (int i =0;i <atribute.length; i++){
+                String[] data2 = atribute[i].split("=");
+                for (int j =0;j <data2.length - 1; j++){
+                    data2[j]=data2[j].replace(" ", "");
+                    switch(data2[j]){
+                         case "name":d.setDname(data2[j+1]); 
+                                     break;
+                        case "surname":d.setDsurname(data2[j+1]);
+                                        break;
+                        case "email": d.setDemail(data2[j+1]); 
+                                     break;
+                        case "id":d.setDoctorId(Integer.parseInt(data2[j+1]));
+                                        break;
+                    }
+ 
+                }
+                
+             }
+        System.out.println("Doctor recieved:");
+        System.out.println(d.toString());
+        
+        
+        }catch(IOException exception){
+            recieved = false;
+        }
+        return recieved; 
+    }
     public static void main(String args[]) throws IOException {
         System.out.println("Starting Client...");
         Socket socket = new Socket("localhost", 9009);
