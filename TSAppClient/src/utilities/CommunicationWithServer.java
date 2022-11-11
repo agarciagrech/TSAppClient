@@ -177,18 +177,18 @@ public class CommunicationWithServer {
         String macAddress = "dzgbihfgbihb";
         Patient p = new Patient(medical_card_number, name, surname, dob, address,  email,  diagnosis,  allergies,  gender,  userId,  macAddress);
         
-        /*
-        String name = "First signal";
+        
+        String sname = "First signal";
         Signal s = new Signal();
-        Patient p = Menu.sendPatient();
-        s = Menu.recordSignal(name);
+        //Patient p = Menu.sendPatient();
+        s = Menu.recordSignal(sname);
         String ecg = Arrays.toString(s.getECG_values());
         String emg = Arrays.toString(s.getEMG_values());
-        printWriter.println(p.toString());
-        printWriter.println(ecg);
-        printWriter.println(emg);
-*/
-        sendPatient(printWriter,p);
+        //printWriter.println(p.toString());
+        printWriter.println("ECG "+ecg);
+        printWriter.println("EMG "+emg);
+
+       // sendPatient(printWriter,p);
         System.out.println("Connection established... sending text");
         printWriter.println("Stop");
         exitFromServer(printWriter, socket);
