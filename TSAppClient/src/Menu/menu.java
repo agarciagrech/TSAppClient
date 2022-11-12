@@ -307,7 +307,7 @@ public class menu {
         
 
 
-        System.out.print("Date of birth [yyyy-mm-dd]: ");	
+        System.out.print("Date of birth [dd/mm/yyyy]: ");	
         String birthdate = sc.next();
         Date bdate; 
         try {
@@ -316,7 +316,7 @@ public class menu {
                     p.setDob(bdate);
             } else {
                     do {
-                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");
+                            System.out.print("Please introduce a valid date [dd/mm/yyyy]: ");
                             birthdate = sc.next();
                             bdate = Date.valueOf(birthdate);
                     } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
@@ -326,7 +326,7 @@ public class menu {
             int b=0;
             do {
                     try {	
-                            System.out.print("Please introduce a valid date format [yyyy-mm-dd]: ");
+                            System.out.print("Please introduce a valid date format [dd/mm/yyyy]: ");
                             birthdate = sc.next();
                             bdate = Date.valueOf(birthdate); 
 
@@ -334,7 +334,7 @@ public class menu {
                                     p.setDob(bdate);
                             } else {
                                     do {
-                                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");							
+                                            System.out.print("Please introduce a valid date [dd/mm/yyyy]: ");							
                                             birthdate = sc.next();
                                             bdate = Date.valueOf(birthdate);
                                     } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
