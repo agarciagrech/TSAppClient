@@ -81,21 +81,6 @@ public class CommunicationWithServer {
     public static void sendSignal(PrintWriter printWriter, Signal signal) {
         printWriter.println(signal.toString());
     }
-    
-    public static boolean exitFromServer(PrintWriter printWriter, Socket socket) {
-        try {
-            //try {
-                printWriter.close();
-           /* } catch (IOException ex) {
-                Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
-    }
-    
    
     
     public static boolean recievePatient(BufferedReader bufferReader){
@@ -368,7 +353,7 @@ public class CommunicationWithServer {
                     return "Problem connecting with server";
                 }
             }
-           } catch (IOException ex) {
+           } catch (IOException ex) { 
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ReleaseResources(inputStream, outputStream, socket);
@@ -392,6 +377,16 @@ public class CommunicationWithServer {
         }catch(IOException ex){
              Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public boolean exitFromServer(PrintWriter pw, BufferedReader br) {
+        pw.close();
+        try {
+            br.close();
+        } catch (IOException ex) {
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }
     
