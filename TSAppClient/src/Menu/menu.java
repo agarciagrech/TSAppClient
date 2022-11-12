@@ -36,14 +36,14 @@ public class menu {
     
 
   
-        public static void main(String[] args) throws Exception {
-             try {
-         Socket socket = new Socket("192.168.1.200",9200);
-         InputStream console = (System.in);
-        InputStream inputStream = socket.getInputStream();
-        OutputStream outputStream = socket.getOutputStream();
-        PrintWriter printWriter = new PrintWriter (outputStream,true);
-        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+    public static void main(String[] args) throws Exception {
+        try {
+            Socket socket = new Socket("192.168.1.200",9200);
+            InputStream console = (System.in);
+            InputStream inputStream = socket.getInputStream();
+            OutputStream outputStream = socket.getOutputStream();
+            PrintWriter printWriter = new PrintWriter (outputStream,true);
+            BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
             
             
         } catch (IOException ex) {

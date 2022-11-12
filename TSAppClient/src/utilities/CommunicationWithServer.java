@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,19 +41,33 @@ import utilities.*;
  */
 public class CommunicationWithServer {
     
-    public static Socket connectToServer() {
-        Socket socket1 = new Socket();
-        /*
+    Scanner sc = new Scanner(System.in);
+    Socket socket = new Socket();
+    InputStream inputStream = null;
+    OutputStream outputStream = null;
+               
+    
+    public boolean connectToServer() {
         try {
-            //String[] datos = getDataFromFile();
-            //in datos[1] we have the number of the port whereas in datos[0] the ip address
-            //int ip = ;
-            //socket1 = new Socket(datos[0], ip);
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
+            BufferedReader br = new BufferedReader (new InputStreamReader(inputStream));
+            PrintWriter pw = new PrintWriter(outputStream,true);
+            int choice = sc.nextInt();
+            try {
+                System.out.println("Please, introduce your role (1-patient/2-doctor): ");
+                pw.print(choice);
+                br.readLine();
+                if (br.readLine().equals("Connection stablished")){
+                    return true;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
-        return socket1;
+        } 
+        return false;
     }
     
     public static void sendDoctor(PrintWriter printWriter, Doctor doctor) {
@@ -174,90 +189,60 @@ public class CommunicationWithServer {
         }
         return recieved; 
     }
-    public static void main(String args[]) throws IOException {
-        System.out.println("Starting Client...");
-        Socket socket = new Socket("localhost", 9009);
-        PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-        Integer medical_card_number = 0;
-        String name = "paquito";
-        String surname = "perez";
-        Date dob = new Date(2001, 01, 01);
-        String address = "calle 1";
-        String email = "dfhbvidfhbg@gmail.com";
-        String diagnosis = "fihbaeifhbvaifbviafhbv";
-        String allergies = "fhbvidfbnijdgbnid";
-        String gender = "male";
-        Integer userId = 1;
-        String macAddress = "dzgbihfgbihb";
-        Patient p = new Patient(medical_card_number, name, surname, dob, address,  email,  diagnosis,  allergies,  gender,  userId,  macAddress);
-        
-        
-        String sname = "First signal";
-        Signal s = new Signal();
-        //Patient p = Menu.sendPatient();
-        s = Menu.recordSignal(sname);
-        String ecg = Arrays.toString(s.getECG_values());
-        String emg = Arrays.toString(s.getEMG_values());
-        //printWriter.println(p.toString());
-        printWriter.println("ECG "+ecg);
-        printWriter.println("EMG "+emg);
-
-       // sendPatient(printWriter,p);
-        System.out.println("Connection established... sending text");
-        printWriter.println("Stop");
-        exitFromServer(printWriter, socket);
-        System.exit(0);
-    }
     
     
     public void recordSignal(Patient p, int samplingRate) {
-        InputStream inputStream = null;
+        try{
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
+        PrintWriter pw = new PrintWriter(outputStream,true);
+        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+        
+        Frame[] frame;
+        BITalino bitalino = null;
+        Signal s = new Signal();
+        int[] ecg_values = new int[1000000];
+        int[] emg_values = new int[100];
         try {
-            Frame[] frame;
-            BITalino bitalino = null;
-            Signal s = new Signal();
-            int[] ecg_values = new int[1000000];
-            int[] emg_values = new int[100];
-            try {
-                bitalino = new BITalino();
-                // Code to find Devices
-                //Only works on some OS
-                Vector<RemoteDevice> devices = bitalino.findDevices();
-                System.out.println(devices);
-                
-                
-                String macAddress = p.getMacAddress();
-                
-                //Sampling rate, should be 10, 100 or 1000
-                bitalino.open(macAddress, samplingRate);
-                
-                // Start acquisition on analog channels A2 and A6
-                // For example, If you want A1, A3 and A4 you should use {0,2,3}
-                int[] channelsToAcquire = {1,2}; //for ECG and EMG
-                bitalino.start(channelsToAcquire);
-                
-                //Read in total 10000000 times --> por que elegimos este num
-                for (int j = 0; j < 10000000; j++) {
-                    
-                    //Each time read a block of 10 samples --> por que elegimos este num
-                    int block_size=10;
-                    frame = bitalino.read(block_size);
-                    
-                    System.out.println("size block: " + frame.length);
-                    
-                    for (int i = 0; i < frame.length; i++) {
-                        ecg_values[i]=frame[i].analog[0];
-                        emg_values[i]=frame[i].analog[1];
-                        System.out.println(" seq: " + frame[i].seq + " "
-                                + frame[i].analog[0] + " ");
-                    }
-                    s.setECG_values(ecg_values);
-                    s.setEMG_values(emg_values);
-                    
+            bitalino = new BITalino();
+            // Code to find Devices
+            //Only works on some OS
+            Vector<RemoteDevice> devices = bitalino.findDevices();
+            System.out.println(devices);
+
+
+            String macAddress = p.getMacAddress();
+
+            //Sampling rate, should be 10, 100 or 1000
+            bitalino.open(macAddress, samplingRate);
+
+            // Start acquisition on analog channels A2 and A6
+            // For example, If you want A1, A3 and A4 you should use {0,2,3}
+            int[] channelsToAcquire = {1,2}; //for ECG and EMG
+            bitalino.start(channelsToAcquire);
+
+            //Read in total 10000000 times --> por que elegimos este num
+            for (int j = 0; j < 10000000; j++) {
+
+                //Each time read a block of 10 samples --> por que elegimos este num
+                int block_size=10;
+                frame = bitalino.read(block_size);
+
+                System.out.println("size block: " + frame.length);
+
+                for (int i = 0; i < frame.length; i++) {
+                    ecg_values[i]=frame[i].analog[0];
+                    emg_values[i]=frame[i].analog[1];
+                    System.out.println(" seq: " + frame[i].seq + " "
+                            + frame[i].analog[0] + " ");
                 }
-                //stop acquisition
-                bitalino.stop();
-            } catch (BITalinoException ex) {
+                s.setECG_values(ecg_values);
+                s.setEMG_values(emg_values);
+
+            }
+            //stop acquisition
+            bitalino.stop();
+        } catch (BITalinoException ex) {
                 Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Throwable ex) {
                 Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
@@ -272,11 +257,6 @@ public class CommunicationWithServer {
                 }
             }
             // Send signals to server:
-            Socket socket = connectToServer();
-            InputStream is = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
-            PrintWriter pw = new PrintWriter(outputStream,true);
-            BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
             pw.println("ECG");
             for (int a = 0;a<ecg_values.length; a++){
                 pw.print(ecg_values[a]);
@@ -335,63 +315,54 @@ public class CommunicationWithServer {
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ReleaseResources(inputStream, outputStream, socket);
         }
     }
     // This method is going to return the filenames of all the signals recorded:
-    public static String[] ShowSignals(Patient p){
-        InputStream is = null;
-        String[] filenames = null;
+    public String[] ShowSignals(Patient p){
         try {
-            List singals = new ArrayList();
-            Socket socket = connectToServer();
-            is = socket.getInputStream();
-            OutputStream os = socket.getOutputStream();
-            PrintWriter pw = new PrintWriter(os,true);
-            BufferedReader bf = new BufferedReader (new InputStreamReader (is));
-            // Pedimos al server que nos envie la lista de señales:
-            pw.println("Send Signals");
-            pw.println("Patient= "+p.getMacAddress());
-            // VOY A ASUMIR QUE SE ENVIAN LOS FILENAME SEPARADOS POR \n
-            String line = bf.readLine();
-            while ((line = bf.readLine()) != null) {
-                filenames =line.split("/n");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException ex) {
-                Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
+        PrintWriter pw = new PrintWriter(outputStream,true);
+        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+            
+        String[] filenames = null;
+        List singals = new ArrayList();
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
+        // Pedimos al server que nos envie la lista de señales:
+        pw.println("Send Signals");
+        pw.println("Patient= "+p.getMacAddress());
+        // VOY A ASUMIR QUE SE ENVIAN LOS FILENAME SEPARADOS POR \n
+        String line = bf.readLine();
+        while ((line = bf.readLine()) != null) {
+            filenames =line.split("/n");
         }
         return filenames;
-        
+        } catch (IOException ex) {
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            ReleaseResources(inputStream, outputStream, socket);
+        }
+        return null;
     }
     
-    public static String loginCheck(String username,String password){
-         InputStream is = null;
-         
+    public String loginCheck(String username,String password){
         try {
-            Socket socket = connectToServer();
-            is = socket.getInputStream();
-            OutputStream os = socket.getOutputStream();
-            PrintWriter pw = new PrintWriter(os,true);
-            BufferedReader bf = new BufferedReader (new InputStreamReader (is));
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
+            PrintWriter pw = new PrintWriter(outputStream,true);
+            BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
             
-            pw.println("loginCheck");
+            pw.print(1);
             pw.println("Username="+username+"Password="+password);
-            String response =bf.readLine();
-            if(response.equalsIgnoreCase("success")){
-                return"User is un db";
+            String response = bf.readLine();
+            if(response.equals("Correct login")){
+                return "Correct login";
             }else{
-                if(response.equalsIgnoreCase("user not found")){
-                    return"User not found on db";
+                if(response.equals("Incorrect username or password")){
+                    return "User not found on db";
                 }
                 else{
                     return "Problem connecting with server";
@@ -400,14 +371,28 @@ public class CommunicationWithServer {
            } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                is.close();
-            } catch (IOException ex) {
-                Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-    }
+            ReleaseResources(inputStream, outputStream, socket);
+        }
+        return null;
     }
     
+    public static void ReleaseResources(InputStream inputStream, OutputStream outputStream, Socket socket ){
+        try{
+            inputStream.close();
+        }catch(IOException ex){
+             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try{
+            outputStream.close();
+        }catch(IOException ex){
+             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try{
+            socket.close();
+        }catch(IOException ex){
+             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
     
     
