@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import static java.lang.System.in;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.text.ParseException;
@@ -41,10 +42,10 @@ import utilities.*;
  */
 public class CommunicationWithServer {
     
-    Scanner sc = new Scanner(System.in);
-    Socket socket = new Socket();
-    InputStream inputStream = null;
-    OutputStream outputStream = null;
+    static Scanner sc = new Scanner(System.in);
+    static Socket socket = new Socket();
+    static InputStream inputStream = null;
+    static OutputStream outputStream = null;
                
     
     public boolean connectToServer() {
@@ -176,59 +177,57 @@ public class CommunicationWithServer {
     }
     
     
-    public void recordSignal(Patient p, int samplingRate) {
+    public static void recordSignal(Patient p, int samplingRate) {
         try{
-        inputStream = socket.getInputStream();
-        outputStream = socket.getOutputStream();
-        PrintWriter pw = new PrintWriter(outputStream,true);
-        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+            socket = new Socket("localhost", 9000);
+            InputStream inputS = socket.getInputStream();
+            OutputStream outputS = socket.getOutputStream();
+            PrintWriter pw = new PrintWriter(outputS,true);
+            BufferedReader bf = new BufferedReader (new InputStreamReader (inputS));
+
+            Frame[] frame;
+            BITalino bitalino = null;
+            Signal s = new Signal();
+            int[] ecg_values = new int[10];
+            int[] emg_values = new int[10];
         
-        Frame[] frame;
-        BITalino bitalino = null;
-        Signal s = new Signal();
-        int[] ecg_values = new int[1000000];
-        int[] emg_values = new int[100];
-        try {
-            bitalino = new BITalino();
-            // Code to find Devices
-            //Only works on some OS
-            Vector<RemoteDevice> devices = bitalino.findDevices();
-            System.out.println(devices);
+            try {
+                bitalino = new BITalino();
+                // Code to find Devices
+                Vector<RemoteDevice> devices = bitalino.findDevices();
+                System.out.println(devices);
 
+                String macAddress = p.getMacAddress();
 
-            String macAddress = p.getMacAddress();
+                bitalino.open(macAddress, samplingRate);
 
-            //Sampling rate, should be 10, 100 or 1000
-            bitalino.open(macAddress, samplingRate);
+                int[] channelsToAcquire = {1,2}; //for EMG and ECG
+                bitalino.start(channelsToAcquire);
 
-            // Start acquisition on analog channels A2 and A6
-            // For example, If you want A1, A3 and A4 you should use {0,2,3}
-            int[] channelsToAcquire = {1,2}; //for ECG and EMG
-            bitalino.start(channelsToAcquire);
+                //Read in total 10000000 times --> por que elegimos este num
+                for (int j = 0; j < 10; j++) {
 
-            //Read in total 10000000 times --> por que elegimos este num
-            for (int j = 0; j < 10000000; j++) {
+                    //Each time read a block of 10 samples to make the trials easier, but we plan to change it
+                    int block_size=1;
+                    frame = bitalino.read(block_size);
 
-                //Each time read a block of 10 samples --> por que elegimos este num
-                int block_size=10;
-                frame = bitalino.read(block_size);
+                    System.out.println("size block: " + frame.length);
 
-                System.out.println("size block: " + frame.length);
+                    for (int i = 0; i < frame.length; i++) {
+                        ecg_values[i]=frame[i].analog[1];
+                        emg_values[i]=frame[i].analog[0];
+                        System.out.println(" seq: " + frame[i].seq + " "
+                                + frame[i].analog[0] + " seq: " + frame[i].seq + " "
+                                + frame[i].analog[1] + " ");
+                    }
+                    s.setECG_values(ecg_values);
+                    s.setEMG_values(emg_values);
 
-                for (int i = 0; i < frame.length; i++) {
-                    ecg_values[i]=frame[i].analog[0];
-                    emg_values[i]=frame[i].analog[1];
-                    System.out.println(" seq: " + frame[i].seq + " "
-                            + frame[i].analog[0] + " ");
                 }
-                s.setECG_values(ecg_values);
-                s.setEMG_values(emg_values);
-
-            }
-            //stop acquisition
-            bitalino.stop();
-        } catch (BITalinoException ex) {
-                Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
+                //stop acquisition
+                bitalino.stop();
+            } catch (BITalinoException ex) {
+                    Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Throwable ex) {
                 Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
@@ -241,29 +240,31 @@ public class CommunicationWithServer {
                     Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            
+            pw.println("ECG: " + Arrays.toString(ecg_values) + " // " + "EMG: " + Arrays.toString(emg_values));
             // Send signals to server:
-            pw.println("ECG");
+            /*pw.println("ECG/n");
             for (int a = 0;a<ecg_values.length; a++){
-                pw.print(ecg_values[a]);
+                pw.print(ecg_values[a] + "/n");
             }
-            pw.println("ECG END");
+            pw.println("ECG END/n");
             String ECGresponse = bf.readLine();
             if (ECGresponse.equalsIgnoreCase("success")){
                 System.out.println("Record sended correctly to server");
             }else{
                 System.out.println("There was a problem sending ECG to server");
             }
-            pw.println("EMG");
+            pw.println("EMG/n");
             for (int a = 0;a<ecg_values.length; a++){
-                pw.print(ecg_values[a]);
+                pw.print(ecg_values[a] + "/n");
             }
-            pw.println("EMG END");
+            pw.println("EMG END/n");
             String EMGresponse = bf.readLine();
             if (EMGresponse.equalsIgnoreCase("success")){
                 System.out.println("Record sended correctly to server");
             }else{
                 System.out.println("There was a problem sending EMG to server");
-            }
+            }*/
             try {
                 //Type of signal + date ".txt"
                 Calendar c = Calendar.getInstance();
@@ -272,8 +273,8 @@ public class CommunicationWithServer {
                 String year=Integer.toString(c.get(Calendar.YEAR));
                 pw.println("ECG filename= ECG"+ day+month+year );
                 pw.println("EMG filename= ECG"+ day+month+year );
-                String ruta = "../TSApp/ECG"+day+month+year+".txt";
-                String ruta2 = "../TSApp/EMG"+day+month+year+".txt";
+                String ruta = "../TSAppClient/ECG"+day+month+year+".txt";
+                String ruta2 = "../TSAppClient/EMG"+day+month+year+".txt";
                 String contenido = Arrays.toString(s.getECG_values());
                 String contenido2 = Arrays.toString(s.getEMG_values());
                 File file = new File(ruta);
@@ -294,13 +295,13 @@ public class CommunicationWithServer {
                 bwEMG.close();
                 
                 System.out.println("Ok");
+                
+                ReleaseResources(inputS, outputS, socket);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            ReleaseResources(inputStream, outputStream, socket);
         }
     }
     // This method is going to return the filenames of all the signals recorded:
@@ -387,6 +388,12 @@ public class CommunicationWithServer {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+    public static void main(String args[]) throws IOException{
+        //Socket socket = new Socket("localhost", 9000);
+        Patient p = new Patient();
+        p.setMacAddress("98:D3:C1:FD:2F:EA");
+        recordSignal(p, 100);
     }
 }
     
