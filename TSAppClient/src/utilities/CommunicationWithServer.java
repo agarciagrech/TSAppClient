@@ -41,14 +41,15 @@ import utilities.*;
  */
 public class CommunicationWithServer {
     
-    Scanner sc = new Scanner(System.in);
-    Socket socket = new Socket();
-    InputStream inputStream = null;
-    OutputStream outputStream = null;
+    static Scanner sc = new Scanner(System.in);
+    static Socket socket = new Socket();
+    static InputStream inputStream = null;
+    static OutputStream outputStream = null;
                
     
-    public boolean connectToServer() {
+    public static boolean connectToServer() {
         try {
+            socket= new Socket("192.168.1.200",9200);
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
             BufferedReader br = new BufferedReader (new InputStreamReader(inputStream));
@@ -193,6 +194,7 @@ public class CommunicationWithServer {
     
     public void recordSignal(Patient p, int samplingRate) {
         try{
+        socket= new Socket("192.168.1.200",9200);
         inputStream = socket.getInputStream();
         outputStream = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(outputStream,true);
@@ -315,12 +317,13 @@ public class CommunicationWithServer {
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            ReleaseResources(inputStream, outputStream, socket);
+            ReleaseResources(inputStream, outputStream);
         }
     }
     // This method is going to return the filenames of all the signals recorded:
     public String[] ShowSignals(Patient p){
         try {
+        socket= new Socket("192.168.1.200",9200);
         inputStream = socket.getInputStream();
         outputStream = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(outputStream,true);
@@ -343,13 +346,14 @@ public class CommunicationWithServer {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally {
-            ReleaseResources(inputStream, outputStream, socket);
+            ReleaseResources(inputStream, outputStream);
         }
         return null;
     }
     
-    public String loginCheck(String username,String password){
+    public static String loginCheck(String username,String password){
         try {
+            socket= new Socket("192.168.1.200",9200);
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
             PrintWriter pw = new PrintWriter(outputStream,true);
@@ -371,12 +375,25 @@ public class CommunicationWithServer {
            } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            ReleaseResources(inputStream, outputStream, socket);
+            ReleaseResources(inputStream, outputStream);
         }
         return null;
     }
     
-    public static void ReleaseResources(InputStream inputStream, OutputStream outputStream, Socket socket ){
+    public static void ReleaseResources(InputStream inputStream, OutputStream outputStream){
+        try{
+            inputStream.close();
+        }catch(IOException ex){
+             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try{
+            outputStream.close();
+        }catch(IOException ex){
+             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+     public static void ReleaseAllResources(InputStream inputStream, OutputStream outputStream, Socket socket ){
         try{
             inputStream.close();
         }catch(IOException ex){
@@ -392,6 +409,35 @@ public class CommunicationWithServer {
         }catch(IOException ex){
              Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static void main(String[] args) {
+        boolean check;
+       check = connectToServer();
+       if (check == true){
+           System.out.println("user role part done correctly");
+       }else{
+           System.out.println("Error in sending user role");
+       }
+       // Probando el login:
+       Scanner sc = new Scanner (System.in);
+        User user = new User();
+        int id =0;
+        do{
+        System.out.println("Please enter your username and password:");
+        System.out.println("Username:");
+        String username = sc.next();
+        System.out.println("Password:");
+        String password = sc.next();
+        user.setPassword(password);
+        user.setUsername(username);
+        
+        String answer = loginCheck(user.getUsername(),user.getPassword());
+        System.out.println(answer);
+        }while (id == -1);
+        
+       
+       
     }
 }
     
