@@ -65,7 +65,7 @@ public class menu {
                         //patientMenu(id);
                         Patient p = createPatient();
                         System.out.println("Your going to record your ECG and EMG signals");
-                        utilities.CommunicationWithServer.recordSignal(p, 10);
+                        utilities.CommunicationWithServer.recordSignal(p, 100,printWriter);
                         break;
                     case 2:
                         //id = login();
@@ -96,7 +96,8 @@ public class menu {
                             case 3:
                                 System.out.println("Edit Patient");
                                 p_createdbyDoc = editPatient(p_createdbyDoc);
-                                utilities.CommunicationWithServer.sendPatient(socket, printWriter, p_createdbyDoc);
+                                System.out.println("back in the doctor swith case 3");
+                                //utilities.CommunicationWithServer.sendPatient(socket, printWriter, p_createdbyDoc);
                                 break;
                             case 4:
                                 System.out.println("Show my Patients");
@@ -289,12 +290,15 @@ public class menu {
         System.out.print("Name: "); 
         String name = sc.next();
         p.setName(name);
+        
         System.out.print("Surname: "); 
         String surname = sc.next();
         p.setSurname(surname);
+        
         System.out.print("Medical card number: "); 
         Integer medCardNumber=1; 
         Boolean validMedNumber = false;
+        
         
         /*
         do { 
@@ -383,6 +387,14 @@ public class menu {
         System.out.print("Email: ");// SOmetimes it works and others it skips to asking for macaddress				
         String email = sc.next();
         p.setEmail(email);
+        
+        System.out.print("Diagnosis: "); 
+        String diagnosis = sc.next();
+        p.setDiagnosis(diagnosis);
+        
+        System.out.print("Allergies: "); 
+        String allergies = sc.next();
+        p.setAllergies(allergies);
         
         System.out.print("Bitalino MACAddress: ");				
         String mac = sc.next();
@@ -507,48 +519,44 @@ public class menu {
     
     private static Patient editPatient (Patient p) throws Exception{
         Scanner sc = new Scanner(System.in);
-        int option=0;
+        int option=1;
         String trashcan;
         String update;
-        int a = 0;
+        
                 
-        do {
+        while(option != 0) {
             System.out.println("Choose an option[0-3]:");
             System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies \n3. Bitalino MacAddres");
-         do {
-                try {
-                        option = sc.nextInt();
-                        a = 1;
-                } catch (Exception e) {
-                        trashcan = sc.next();
-                        System.out.println("Please input a valid option.");
-                }
-            } while (a==0);
-
+            option = sc.nextInt();
+            
             switch(option) {
                 case 0:
-                    option = 0;
+                    option=0;
                     break;
-            case 1:
-                    System.out.println("Write diagnosis:");
-                    update = sc.next();
-                    p.setDiagnosis(update); //Esto se hará por db
-                    // Mandar diagnosis al server y que haga update
-                    break;
-            case 2:
-                    System.out.println("Write Allergies:");
-                    update = sc.next();
-                    p.setAllergies(update); //Esto se hará por db
-                    // Mandar diagnosis al server y que haga update
-                    break;
-            case 3:
-                    System.out.println("Write Bitalino MacAddress:");
-                    update = sc.next();
-                    p.setMacAddress(update); //Esto se hará por db
-                    // Mandar diagnosis al server y que haga update
-                    break;
+                case 1:
+                        System.out.println("Write diagnosis:");
+                        update = sc.next();
+                        p.setDiagnosis(update); //Esto se hará por db
+                        // Mandar diagnosis al server y que haga update
+                        break;
+                case 2:
+                        System.out.println("Write Allergies:");
+                        update = sc.next();
+                        p.setAllergies(update); //Esto se hará por db
+                        // Mandar diagnosis al server y que haga update
+                        break;
+                case 3:
+                        System.out.println("Write Bitalino MacAddress:");
+                        update = sc.next();
+                        p.setMacAddress(update); //Esto se hará por db
+                        // Mandar diagnosis al server y que haga update
+                        break;
+                default:
+                     System.out.println("not valid option");
+                     break;
             }
-        } while(option != 0);
+        }
+        System.out.println("out of the while");
         return p;
     }
 }

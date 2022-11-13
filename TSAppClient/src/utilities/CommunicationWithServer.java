@@ -179,13 +179,8 @@ public class CommunicationWithServer {
     }
     
     
-    public static void recordSignal(Patient p, int samplingRate) {
-        try{
-            socket = new Socket("localhost", 9000);
-            InputStream inputS = socket.getInputStream();
-            OutputStream outputS = socket.getOutputStream();
-            PrintWriter pw = new PrintWriter(outputS,true);
-            BufferedReader bf = new BufferedReader (new InputStreamReader (inputS));
+    public static void recordSignal(Patient p, int samplingRate, PrintWriter pw) {
+        
 
             Frame[] frame;
             BITalino bitalino = null;
@@ -300,13 +295,11 @@ public class CommunicationWithServer {
                 
                 System.out.println("Ok");
                 
-                ReleaseResources(inputS, outputS, socket);
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } catch (IOException ex) {
-            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
     // This method is going to return the filenames of all the signals recorded:
     public String[] ShowSignals(Patient p){
@@ -420,6 +413,7 @@ public class CommunicationWithServer {
         }
         return false;
     }
+    // Main to test the methods:
 //    public static void main(String args[]) throws IOException{
 //        socket = new Socket("localhost", 9000);// We have tried with public IPs and it didn't work, we do not know if we have to change it manually like we didi in the practice
 //        inputStream = socket.getInputStream();
