@@ -84,7 +84,7 @@ public class CommunicationWithServer {
     }
    
     
-    public static boolean recievePatient(BufferedReader bufferReader){
+    public static boolean receivePatient(BufferedReader bufferReader){
         boolean recieved = true; 
         Patient p = new Patient();
         try{
@@ -131,7 +131,7 @@ public class CommunicationWithServer {
                 }
                 
              }
-        System.out.println("Patient recieved:");
+        System.out.println("Patient received:");
         System.out.println(p.toString());
         
         
@@ -140,7 +140,7 @@ public class CommunicationWithServer {
         }
         return recieved; 
     }
-        public static boolean recieveDoctor(BufferedReader bufferReader){
+        public static boolean receiveDoctor(BufferedReader bufferReader){
         boolean recieved = true; 
         Doctor d= new Doctor();
         try{
@@ -392,9 +392,32 @@ public class CommunicationWithServer {
     }
     public static void main(String args[]) throws IOException{
         //Socket socket = new Socket("localhost", 9000);
-        Patient p = new Patient();
-        p.setMacAddress("98:D3:C1:FD:2F:EA");
-        recordSignal(p, 100);
+        BufferedReader br = new BufferedReader (new InputStreamReader(inputStream));
+        PrintWriter pw = new PrintWriter(outputStream,true);
+        
+        Integer medcard = 234;
+        String name = "Paco";
+        String surname = "Garcia";
+        Date dob = new Date(2/3/1999);
+        String address= "Calle patitos";
+        String email = "pacogarcia@gmail.com";
+        String diagnosis = "diabetes";
+        String allergies = "gluten";
+        String gender = "Male";
+        String macAd = "98:D3:C1:FD:2F:EA";
+        Patient p = new Patient(medcard, name, surname, dob, address, email, diagnosis, allergies, gender, macAd);
+        receivePatient(br);
+        sendPatient(pw, p);
+        
+        Integer id = 1;
+        String doctor_name = "Juan";
+        String doctor_surname = "Martinez";
+        String doctor_email = "juanmartinez@tsapp.com";
+        Doctor d = new Doctor(id, doctor_name, doctor_surname, doctor_email);
+        receiveDoctor(br);
+        sendDoctor(pw, d);
+       // p.setMacAddress("98:D3:C1:FD:2F:EA");
+        //recordSignal(p, 100);
     }
 }
     

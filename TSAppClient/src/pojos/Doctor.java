@@ -26,6 +26,13 @@ public class Doctor {
         this.demail = demail;
         this.userId = userId;
     }
+    
+    public Doctor(Integer doctorId, String dname, String dsurname, String demail) {
+        this.doctorId = doctorId;
+        this.dname = dname;
+        this.dsurname = dsurname;
+        this.demail = demail;
+    }
 
     public Integer getDoctorId() {
         return doctorId;
@@ -69,7 +76,7 @@ public class Doctor {
 
     @Override
     public String toString() {
-        return "Doctor{" + "doctorId=" + doctorId + ", dname=" + dname + ", dsurname=" + dsurname + ", demail=" + demail + ", userId=" + userId + '}';
+        return "Doctor{" + "doctorId=" + doctorId + ", dname=" + dname + ", dsurname=" + dsurname + ", demail=" + demail +  '}';
     }
     
     

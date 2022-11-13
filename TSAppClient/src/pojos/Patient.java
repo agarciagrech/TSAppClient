@@ -47,6 +47,20 @@ public class Patient implements Serializable{
         this.userId = userId;
         this.macAddress = macAddress;
     }
+    
+    public Patient(Integer medical_card_number, String name, String surname, Date dob, String address, String email, String diagnosis, String allergies, String gender, String macAddress) {
+        this.medical_card_number = medical_card_number;
+        this.name = name;
+        this.surname = surname;
+        this.dob = dob;
+        this.address = address;
+        this.email = email;
+        this.diagnosis = diagnosis;
+        this.allergies = allergies;
+        this.gender = gender;
+        this.macAddress = macAddress;
+    }
+
 
     public Integer getMedical_card_number() {
         return medical_card_number;
@@ -143,7 +157,7 @@ public class Patient implements Serializable{
 
     @Override
     public String toString() {
-        return "Patient{" + "medical_card_number=" + medical_card_number + ", name=" + name + ", surname=" + surname + ", dob=" + formatDate(dob) + ", address=" + address + ", email=" + email + ", diagnosis=" + diagnosis + ", allergies=" + allergies + ", gender=" + gender + ", userId=" + userId + ", macAddress=" + macAddress + '}';
+        return "Patient{" + "medical_card_number=" + medical_card_number + ", name=" + name + ", surname=" + surname + ", dob=" + formatDate(dob) + ", address=" + address + ", email=" + email + ", diagnosis=" + diagnosis + ", allergies=" + allergies + ", gender=" + gender + ", macAddress=" + macAddress + '}';
     }
     
     
