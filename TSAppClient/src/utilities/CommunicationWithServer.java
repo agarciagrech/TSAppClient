@@ -71,12 +71,12 @@ public class CommunicationWithServer {
         return false;
     }
     
-    public static void sendDoctor(PrintWriter printWriter, Doctor doctor) {
-       printWriter.println(doctor.toString());
+    public static void sendDoctor(Socket socket,PrintWriter pw, Doctor doctor) {
+         pw.println(doctor.toString());
     }
     
-    public static void sendPatient(PrintWriter printWriter, Patient patient) {
-        printWriter.println(patient.toString());
+    public static void sendPatient(Socket socket,PrintWriter pw,Patient patient) {
+        pw.println(patient.toString());
     }
     
     public static void sendSignal(PrintWriter printWriter, Signal signal) {
@@ -84,11 +84,13 @@ public class CommunicationWithServer {
     }
    
     
-    public static boolean receivePatient(BufferedReader bufferReader){
-        boolean recieved = true; 
-        Patient p = new Patient();
+    public static boolean receivePatient(Socket socket, BufferedReader bf){
+        boolean recieved = true;
         try{
-            String line = bufferReader.readLine();
+              
+            Patient p = new Patient();
+        
+            String line = bf.readLine();
             line=line.replace("{", "");
             line=line.replace("Patient", "");
             String[] atribute = line.split(",");
@@ -308,6 +310,7 @@ public class CommunicationWithServer {
     // This method is going to return the filenames of all the signals recorded:
     public String[] ShowSignals(Patient p){
         try {
+        socket = new Socket("localhost", 9000);
         inputStream = socket.getInputStream();
         outputStream = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(outputStream,true);
@@ -333,6 +336,32 @@ public class CommunicationWithServer {
             ReleaseResources(inputStream, outputStream, socket);
         }
         return null;
+    }
+    public static void receivePatientList(Socket socket,BufferedReader bf){
+        List<String> patientList = new ArrayList();
+        boolean stop= true;
+        try {
+            
+         while(stop){
+            String line = bf.readLine();
+            if (!line.equalsIgnoreCase("End of list")) {
+                stop=true;
+                System.out.println(line);
+                patientList.add(line);
+            }else{
+                stop=false;
+            }
+            
+         }   
+            System.out.println("after while");
+            for(int i =0;i<patientList.size();i++){
+            System.out.println(patientList.get(i));
+            }
+         
+        } catch (IOException ex) {
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
     }
     
     public String loginCheck(String username,String password){
@@ -391,10 +420,12 @@ public class CommunicationWithServer {
         return false;
     }
     public static void main(String args[]) throws IOException{
-        //Socket socket = new Socket("localhost", 9000);
-        BufferedReader br = new BufferedReader (new InputStreamReader(inputStream));
+        socket = new Socket("localhost", 9000);// We have tried with public IPs and it didn't work, we do not know if we have to change it manually like we didi in the practice
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(outputStream,true);
-        
+        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+        /*    
         Integer medcard = 234;
         String name = "Paco";
         String surname = "Garcia";
@@ -406,18 +437,19 @@ public class CommunicationWithServer {
         String gender = "Male";
         String macAd = "98:D3:C1:FD:2F:EA";
         Patient p = new Patient(medcard, name, surname, dob, address, email, diagnosis, allergies, gender, macAd);
-        receivePatient(br);
-        sendPatient(pw, p);
+        receivePatient(socket,bf);
+        sendPatient(socket,pw,p);
         
-        Integer id = 1;
+        int id = 1;
         String doctor_name = "Juan";
         String doctor_surname = "Martinez";
         String doctor_email = "juanmartinez@tsapp.com";
         Doctor d = new Doctor(id, doctor_name, doctor_surname, doctor_email);
-        receiveDoctor(br);
-        sendDoctor(pw, d);
+        sendDoctor(socket,pw,d);
        // p.setMacAddress("98:D3:C1:FD:2F:EA");
         //recordSignal(p, 100);
+        
+        receivePatientList(socket,bf);*/
     }
 }
     
