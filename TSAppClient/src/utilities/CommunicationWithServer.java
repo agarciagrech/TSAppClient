@@ -179,6 +179,7 @@ public class CommunicationWithServer {
     }
     
     
+    
     public static void recordSignal(Patient p, int samplingRate, PrintWriter pw) {
         
 
