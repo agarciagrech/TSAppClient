@@ -29,6 +29,8 @@ import pojos.Patient;
 import pojos.Signal;
 import pojos.User;
 
+import utilities.*;
+
 public class menu {
    
      
@@ -45,52 +47,77 @@ public class menu {
             PrintWriter printWriter = new PrintWriter (outputStream,true);
             BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
             
-            
+        Scanner sc = new Scanner(System.in);
+        int option;
+        String trashcan;
+        int id=0;
+        int choice=1;
+	
+            do {
+                try {
+                    System.out.println("Welcome to Telesomnia. Choose Your Role");
+                    System.out.println("1. Patient");
+                    System.out.println("2. Doctor");
+                    System.out.println("0. Exit");
+                    choice = sc.nextInt();
+                    switch(choice) {
+                    case 1:
+                        //id = login();
+                        //patientMenu(id);
+                        Patient p = createPatient();
+                        System.out.println("Your going to record your ECG and EMG signals");
+                        utilities.CommunicationWithServer.recordSignal(p, 10);
+                        break;
+                    case 2:
+                        //id = login();
+                        //doctorMenu(id);
+                        System.out.println("Choose an option[0-2]:");
+                        System.out.println("\n1.Register \n2. Register a new patient \n3. Edit Patient \n4. Show my Patients \\n 0. Exit");
+                        option = sc.nextInt();
+                        Patient p_createdbyDoc = new Patient();
+                        do{
+                        switch(option){
+                            case 0:
+                                System.out.println("Thank you for using our system");
+                                utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
+                                utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
+                                System.exit(0);
+                            case 1: System.out.println("Register");
+                                Doctor d = createDoctor();
+                            case 2: System.out.println("Register a new Patient");
+                                p_createdbyDoc = createPatient();
+                            case 3:
+                                System.out.println("Edit Patient");
+                                p_createdbyDoc = editPatient(p_createdbyDoc);
+                                break;
+                            case 4:
+                                System.out.println("Show my Patients");
+                                utilities.CommunicationWithServer.receivePatientList(socket, bf);
+                                break;
+                            }
+                        } while(option != 0);
+                        break;
+                
+                    case 0: 
+                        utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
+                        utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
+                        System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Not a valid option.");
+                        break;
+                    }
+                
+                } catch (Exception e) {
+                        trashcan = sc.next();
+                        System.out.println("Please introduce a valid option.");
+                }
+            }while(choice != 0);
+    
         } catch (IOException ex) {
             Logger.getLogger(menu.class.getName()).log(Level.SEVERE, null, ex);
         }
-                Scanner sc = new Scanner(System.in);
-                int option;
-                String trashcan;
-                int id=0;
-                
-                try{
-			
-			
-			do {
-				try {
-					System.out.println("Welcome to Telesomnia. Choose Your Role");
-					System.out.println("1. Pateint");
-					System.out.println("2. Doctor");
-					System.out.println("0. Exit");
-					int choice = sc.nextInt();
-					switch(choice) {
-					case 1:
-						id = login();
-                                                patientMenu(id);
-                                                // Enviar user a server y que compruebe si exsite -> SI no, que me mande un mensaje
-						break;
-					case 2:
-						id = login();
-                                                doctorMenu(id);
-						break;
-					case 0: 
-						
-						System.exit(0);
-						break;
-					default:
-						System.out.println("Not a valid option.");
-						break;
-					}	
-				} catch (Exception e) {
-					trashcan = sc.next();
-					System.out.println("Please introduce a valid option.");
-				}
-			}while(true);
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+    }
         
 	
         
@@ -125,6 +152,7 @@ public class menu {
 					// Desconectar 
 					System.exit(0);
 				case 1:
+                                    
 					System.out.println("You can start recording your signal");
 					
 					break;
@@ -243,7 +271,8 @@ public class menu {
         }
     }
     
- public static void createPatient () throws NotBoundException, Exception {
+ //For the final practice this will be void, but right now, as the db doesn't work, it will return a patient.  
+ public static Patient createPatient () throws NotBoundException, Exception {
 
         Scanner sc = new Scanner (System.in);
         Patient p = new Patient();
@@ -355,8 +384,9 @@ public class menu {
         p.setEmail(email);
 
         System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
-        register(p.getName(),p.getSurname(), p.getMedical_card_number()); 
-        System.out.println("The patient was succesfully added to the database");
+        //register(p.getName(),p.getSurname(), p.getMedical_card_number()); 
+        //System.out.println("The patient was succesfully added to the database");
+        return p;
     }
     
 
@@ -389,8 +419,9 @@ public class menu {
         
         // Enviar al server y que busque y elimine
     }
-     
-    public static void createDoctor() throws Exception{
+    
+    //For the final practice this will be void, but right now, as the db doesn't work, it will return a patient.  
+    public static Doctor createDoctor() throws Exception{
         Doctor d = new Doctor();
         Scanner sc = new Scanner (System.in);
 
@@ -404,8 +435,9 @@ public class menu {
         d.setDsurname(surname);
         
         System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
-        register(d.getDname(), d.getDsurname(), d.getDoctorId()); 
-        System.out.println("The doctor was succesfully added to the database");
+        return d;
+        //register(d.getDname(), d.getDsurname(), d.getDoctorId()); 
+        //System.out.println("The doctor was succesfully added to the database");
     }
     
     
@@ -443,10 +475,9 @@ public class menu {
                     editPatient(patient);
                     break;
             case 3:
-                    System.out.println("Consult medical tests");
+                    System.out.println("Consult recordings");
                     showSignals(patient);
                     break;
-            
             }
         } while(true);
     }
@@ -460,7 +491,8 @@ public class menu {
                     signalFilename=sc.next();
                     // Enviamos filename al server y que la busque
     }
-    private static void editPatient (Patient p) throws Exception{
+    
+    private static Patient editPatient (Patient p) throws Exception{
         Scanner sc = new Scanner(System.in);
         int option=0;
         String trashcan;
@@ -469,7 +501,7 @@ public class menu {
                 
         do {
             System.out.println("Choose an option[0-2]:");
-            System.out.println("\n1. Diagnosis \n2. Allergies \\n 0. Bitalino MacAddres");
+            System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies \\n 3. Bitalino MacAddres");
          do {
                 try {
                         option = sc.nextInt();
@@ -481,23 +513,29 @@ public class menu {
             } while (a==0);
 
             switch(option) {
-            case 0:
-                    System.out.println("Write diagnosis:");
-                    update = sc.next();
-                    // Mandar diagnosis al server y que haga update
+                case 0:
+                    option = 0;
                     break;
             case 1:
-                    System.out.println("Write Allergies:");
+                    System.out.println("Write diagnosis:");
                     update = sc.next();
+                    p.setDiagnosis(update); //Esto se hará por db
                     // Mandar diagnosis al server y que haga update
                     break;
             case 2:
+                    System.out.println("Write Allergies:");
+                    update = sc.next();
+                    p.setAllergies(update); //Esto se hará por db
+                    // Mandar diagnosis al server y que haga update
+                    break;
+            case 3:
                     System.out.println("Write Bitalino MacAddress:");
                     update = sc.next();
+                    p.setMacAddress(update); //Esto se hará por db
                     // Mandar diagnosis al server y que haga update
                     break;
             }
-        } while(true);
+        } while(option != 0);
+        return p;
     }
-        
 }

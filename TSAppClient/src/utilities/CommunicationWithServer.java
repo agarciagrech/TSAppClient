@@ -410,7 +410,7 @@ public class CommunicationWithServer {
         }
     }
     
-    public boolean exitFromServer(PrintWriter pw, BufferedReader br) {
+    public static boolean exitFromServer(PrintWriter pw, BufferedReader br) {
         pw.close();
         try {
             br.close();
