@@ -214,16 +214,17 @@ public class CommunicationWithServer {
                     System.out.println("size block: " + frame.length);
 
                     for (int i = 0; i < frame.length; i++) {
-                        ecg_values[i]=frame[i].analog[1];
-                        emg_values[i]=frame[i].analog[0];
+                        ecg_values[j]=frame[i].analog[1];
+                        emg_values[j]=frame[i].analog[0];
                         System.out.println(" seq: " + frame[i].seq + " "
                                 + frame[i].analog[0] + " seq: " + frame[i].seq + " "
                                 + frame[i].analog[1] + " ");
                     }
+                }
+                    System.out.println(Arrays.toString(ecg_values));
+                    System.out.println(Arrays.toString(emg_values));
                     s.setECG_values(ecg_values);
                     s.setEMG_values(emg_values);
-
-                }
                 //stop acquisition
                 bitalino.stop();
             } catch (BITalinoException ex) {
