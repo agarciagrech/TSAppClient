@@ -245,6 +245,7 @@ public class CommunicationWithServer {
             }
             
             pw.println("ECG: " + Arrays.toString(ecg_values) + " // " + "EMG: " + Arrays.toString(emg_values));
+            
             // Send signals to server:
             /*pw.println("ECG/n");
             for (int a = 0;a<ecg_values.length; a++){
@@ -419,38 +420,38 @@ public class CommunicationWithServer {
         }
         return false;
     }
-    public static void main(String args[]) throws IOException{
-        socket = new Socket("localhost", 9000);// We have tried with public IPs and it didn't work, we do not know if we have to change it manually like we didi in the practice
-        inputStream = socket.getInputStream();
-        outputStream = socket.getOutputStream();
-        PrintWriter pw = new PrintWriter(outputStream,true);
-        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
-           
-        Integer medcard = 234;
-        String name = "Paco";
-        String surname = "Garcia";
-        Date dob = new Date(2/3/1999);
-        String address= "Calle patitos";
-        String email = "pacogarcia@gmail.com";
-        String diagnosis = "diabetes";
-        String allergies = "gluten";
-        String gender = "Male";
-        String macAd = "98:D3:C1:FD:2F:EA";
-        Patient p = new Patient(medcard, name, surname, dob, address, email, diagnosis, allergies, gender, macAd);
-        /*receivePatient(socket,bf);
-        sendPatient(socket,pw,p);
-        
-        int id = 1;
-        String doctor_name = "Juan";
-        String doctor_surname = "Martinez";
-        String doctor_email = "juanmartinez@tsapp.com";
-        Doctor d = new Doctor(id, doctor_name, doctor_surname, doctor_email);
-        sendDoctor(socket,pw,d);*/
-        p.setMacAddress("98:D3:C1:FD:2F:EA");
-        recordSignal(p, 100);
-        
-        //receivePatientList(socket,bf);
-    }
+//    public static void main(String args[]) throws IOException{
+//        socket = new Socket("localhost", 9000);// We have tried with public IPs and it didn't work, we do not know if we have to change it manually like we didi in the practice
+//        inputStream = socket.getInputStream();
+//        outputStream = socket.getOutputStream();
+//        PrintWriter pw = new PrintWriter(outputStream,true);
+//        BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+//           
+//        Integer medcard = 234;
+//        String name = "Paco";
+//        String surname = "Garcia";
+//        Date dob = new Date(2/3/1999);
+//        String address= "Calle patitos";
+//        String email = "pacogarcia@gmail.com";
+//        String diagnosis = "diabetes";
+//        String allergies = "gluten";
+//        String gender = "Male";
+//        String macAd = "98:D3:C1:FD:2F:EA";
+//        Patient p = new Patient(medcard, name, surname, dob, address, email, diagnosis, allergies, gender, macAd);
+//        /*receivePatient(socket,bf);
+//        sendPatient(socket,pw,p);
+//        
+//        int id = 1;
+//        String doctor_name = "Juan";
+//        String doctor_surname = "Martinez";
+//        String doctor_email = "juanmartinez@tsapp.com";
+//        Doctor d = new Doctor(id, doctor_name, doctor_surname, doctor_email);
+//        sendDoctor(socket,pw,d);*/
+//        p.setMacAddress("98:D3:C1:FD:2F:EA");
+//        recordSignal(p, 100);
+//        
+//        //receivePatientList(socket,bf);
+//    }
 }
     
     

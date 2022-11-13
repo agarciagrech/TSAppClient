@@ -11,8 +11,6 @@ import java.security.*;
 import java.util.*;
 import java.sql.Date;
 
-
-import Utilities.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +38,7 @@ public class menu {
   
     public static void main(String[] args) throws Exception {
         try {
-            Socket socket = new Socket("192.168.1.200",9200);
+            Socket socket = new Socket("localhost",9000);
             InputStream console = (System.in);
             InputStream inputStream = socket.getInputStream();
             OutputStream outputStream = socket.getOutputStream();
@@ -60,6 +58,7 @@ public class menu {
                     System.out.println("2. Doctor");
                     System.out.println("0. Exit");
                     choice = sc.nextInt();
+                    printWriter.println(choice);
                     switch(choice) {
                     case 1:
                         //id = login();
@@ -71,24 +70,33 @@ public class menu {
                     case 2:
                         //id = login();
                         //doctorMenu(id);
-                        System.out.println("Choose an option[0-2]:");
-                        System.out.println("\n1.Register \n2. Register a new patient \n3. Edit Patient \n4. Show my Patients \\n 0. Exit");
-                        option = sc.nextInt();
-                        Patient p_createdbyDoc = new Patient();
                         do{
+                        System.out.println("Choose an option[0-4]:");
+                        System.out.println("\n1.Register \n2. Register a new patient \n3. Edit Patient \n4. Show my Patients \n0. Exit");
+                        option = sc.nextInt();
+                        
+                        printWriter.println(option);
+                        Patient p_createdbyDoc = new Patient();
+                        
                         switch(option){
                             case 0:
                                 System.out.println("Thank you for using our system");
                                 utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
                                 utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
                                 System.exit(0);
+                                break;
                             case 1: System.out.println("Register");
                                 Doctor d = createDoctor();
+                                utilities.CommunicationWithServer.sendDoctor(socket, printWriter, d);
+                                break;
                             case 2: System.out.println("Register a new Patient");
                                 p_createdbyDoc = createPatient();
+                                utilities.CommunicationWithServer.sendPatient(socket, printWriter, p_createdbyDoc);
+                                break;
                             case 3:
                                 System.out.println("Edit Patient");
                                 p_createdbyDoc = editPatient(p_createdbyDoc);
+                                utilities.CommunicationWithServer.sendPatient(socket, printWriter, p_createdbyDoc);
                                 break;
                             case 4:
                                 System.out.println("Show my Patients");
@@ -299,44 +307,37 @@ public class menu {
             System.out.print("Error. Please introduce medical card number: "); 
         } while (patientman.selectPatient(medCardNumber) != null&&(!validMedNumber) );
         */
-        
+        do{
         try {
             medCardNumber = sc.nextInt(); 
             validMedNumber = true;
             }catch(Exception e) {
                     System.out.println("Please introduce a valid medical card number which only contains numbers");
             }
-        System.out.print("Error. Please introduce medical card number: ");
+        
+        }while (validMedNumber = false);
         // COmprobar que no hay un paciente con la medical card number
         p.setMedical_card_number(medCardNumber);
 
         System.out.print("Gender: ");
         String gender = sc.next();   
-        
+        do{
             if (gender.equalsIgnoreCase("male")) {
                     gender = "Male";
-            } else {
+            } else if (gender.equalsIgnoreCase("female")) {
                     gender = "Female";
+            } else{
+                 System.out.print("Not a valid gender. Please introduce a gender (Male or Female): ");
+                 gender = sc.next();
             }
-
-            p.setGender(gender);		
-        
-            do{
-                    System.out.print("Not a valid gender. Please introduce a gender (Male or Female): ");
-                    gender = sc.next();
-            } while (!(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female")));
-
-            if (gender.equalsIgnoreCase("male")) {
-                    gender = "Male";
-            } else {
-                    gender = "Female";
-            }
-
-            p.setGender(gender);
+                
+            }while (!(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female")));
+            
+        p.setGender(gender);
         
 
 
-        System.out.print("Date of birth [dd/mm/yyyy]: ");	
+        System.out.print("Date of birth [yyyy-mm-dd]: ");	
         String birthdate = sc.next();
         Date bdate; 
         try {
@@ -345,7 +346,7 @@ public class menu {
                     p.setDob(bdate);
             } else {
                     do {
-                            System.out.print("Please introduce a valid date [dd/mm/yyyy]: ");
+                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");
                             birthdate = sc.next();
                             bdate = Date.valueOf(birthdate);
                     } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
@@ -355,7 +356,7 @@ public class menu {
             int b=0;
             do {
                     try {	
-                            System.out.print("Please introduce a valid date format [dd/mm/yyyy]: ");
+                            System.out.print("Please introduce a valid date format [yyyy-mm-dd]: ");
                             birthdate = sc.next();
                             bdate = Date.valueOf(birthdate); 
 
@@ -363,7 +364,7 @@ public class menu {
                                     p.setDob(bdate);
                             } else {
                                     do {
-                                            System.out.print("Please introduce a valid date [dd/mm/yyyy]: ");							
+                                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");							
                                             birthdate = sc.next();
                                             bdate = Date.valueOf(birthdate);
                                     } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
@@ -379,11 +380,15 @@ public class menu {
         String address = sc.next();
         p.setAddress(address);
 
-        System.out.print("Email:: ");				
+        System.out.print("Email: ");// SOmetimes it works and others it skips to asking for macaddress				
         String email = sc.next();
         p.setEmail(email);
-
-        System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
+        
+        System.out.print("Bitalino MACAddress: ");				
+        String mac = sc.next();
+        p.setMacAddress(mac);
+        
+        //System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
         //register(p.getName(),p.getSurname(), p.getMedical_card_number()); 
         //System.out.println("The patient was succesfully added to the database");
         return p;
@@ -434,7 +439,15 @@ public class menu {
         String surname = sc.next();
         d.setDsurname(surname);
         
-        System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
+        System.out.print("Email: ");
+        String email = sc.next();
+        d.setDemail(email);
+        
+        System.out.print("Id: ");
+        int id = sc.nextInt();
+        d.setDoctorId(id);
+        
+        //System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
         return d;
         //register(d.getDname(), d.getDsurname(), d.getDoctorId()); 
         //System.out.println("The doctor was succesfully added to the database");
@@ -500,8 +513,8 @@ public class menu {
         int a = 0;
                 
         do {
-            System.out.println("Choose an option[0-2]:");
-            System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies \\n 3. Bitalino MacAddres");
+            System.out.println("Choose an option[0-3]:");
+            System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies \n3. Bitalino MacAddres");
          do {
                 try {
                         option = sc.nextInt();
