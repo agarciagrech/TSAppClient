@@ -224,54 +224,17 @@ public class CommunicationWithServer {
                     s.setEMG_values(emg_values);
                 //stop acquisition
                 bitalino.stop();
-            } catch (BITalinoException ex) {
-                    Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Throwable ex) {
-                Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                try {
-                    //close bluetooth connection
-                    if (bitalino != null) {
-                        bitalino.close();
-                    }
-                } catch (BITalinoException ex) {
-                    Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            
-            pw.println("ECG: " + Arrays.toString(ecg_values) + " // " + "EMG: " + Arrays.toString(emg_values));
-            
-            // Send signals to server:
-            /*pw.println("ECG/n");
-            for (int a = 0;a<ecg_values.length; a++){
-                pw.print(ecg_values[a] + "/n");
-            }
-            pw.println("ECG END/n");
-            String ECGresponse = bf.readLine();
-            if (ECGresponse.equalsIgnoreCase("success")){
-                System.out.println("Record sended correctly to server");
-            }else{
-                System.out.println("There was a problem sending ECG to server");
-            }
-            pw.println("EMG/n");
-            for (int a = 0;a<ecg_values.length; a++){
-                pw.print(ecg_values[a] + "/n");
-            }
-            pw.println("EMG END/n");
-            String EMGresponse = bf.readLine();
-            if (EMGresponse.equalsIgnoreCase("success")){
-                System.out.println("Record sended correctly to server");
-            }else{
-                System.out.println("There was a problem sending EMG to server");
-            }*/
-            try {
+                
+                pw.println("ECG: " + Arrays.toString(ecg_values) + " // " + "EMG: " + Arrays.toString(emg_values));
                 //Type of signal + date ".txt"
                 Calendar c = Calendar.getInstance();
                 String day=Integer.toString(c.get(Calendar.DATE));
                 String month=Integer.toString(c.get(Calendar.MONTH));
                 String year=Integer.toString(c.get(Calendar.YEAR));
+                
                 pw.println("ECG filename= ECG"+ day+month+year );
                 pw.println("EMG filename= EMG"+ day+month+year );
+                
                 String ruta = "../TSAppClient/ECG"+day+month+year+".txt";
                 String ruta2 = "../TSAppClient/EMG"+day+month+year+".txt";
                 String contenido = Arrays.toString(s.getECG_values());
@@ -294,12 +257,21 @@ public class CommunicationWithServer {
                 bwEMG.close();
                 
                 System.out.println("Ok");
-                
-                
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (BITalinoException ex) {
+                    Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Throwable ex) {
+                Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    //close bluetooth connection
+                    if (bitalino != null) {
+                        bitalino.close();
+                    }
+                } catch (BITalinoException ex) {
+                    Logger.getLogger(BitalinoDemo.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        
+               
     }
     // This method is going to return the filenames of all the signals recorded:
     public String[] ShowSignals(Patient p){
