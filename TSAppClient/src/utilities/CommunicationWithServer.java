@@ -275,7 +275,7 @@ public class CommunicationWithServer {
                 String month=Integer.toString(c.get(Calendar.MONTH));
                 String year=Integer.toString(c.get(Calendar.YEAR));
                 pw.println("ECG filename= ECG"+ day+month+year );
-                pw.println("EMG filename= ECG"+ day+month+year );
+                pw.println("EMG filename= EMG"+ day+month+year );
                 String ruta = "../TSAppClient/ECG"+day+month+year+".txt";
                 String ruta2 = "../TSAppClient/EMG"+day+month+year+".txt";
                 String contenido = Arrays.toString(s.getECG_values());
@@ -425,7 +425,7 @@ public class CommunicationWithServer {
         outputStream = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(outputStream,true);
         BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
-        /*    
+           
         Integer medcard = 234;
         String name = "Paco";
         String surname = "Garcia";
@@ -437,7 +437,7 @@ public class CommunicationWithServer {
         String gender = "Male";
         String macAd = "98:D3:C1:FD:2F:EA";
         Patient p = new Patient(medcard, name, surname, dob, address, email, diagnosis, allergies, gender, macAd);
-        receivePatient(socket,bf);
+        /*receivePatient(socket,bf);
         sendPatient(socket,pw,p);
         
         int id = 1;
@@ -445,11 +445,11 @@ public class CommunicationWithServer {
         String doctor_surname = "Martinez";
         String doctor_email = "juanmartinez@tsapp.com";
         Doctor d = new Doctor(id, doctor_name, doctor_surname, doctor_email);
-        sendDoctor(socket,pw,d);
-       // p.setMacAddress("98:D3:C1:FD:2F:EA");
-        //recordSignal(p, 100);
+        sendDoctor(socket,pw,d);*/
+        p.setMacAddress("98:D3:C1:FD:2F:EA");
+        recordSignal(p, 100);
         
-        receivePatientList(socket,bf);*/
+        //receivePatientList(socket,bf);
     }
 }
     
