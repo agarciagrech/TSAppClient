@@ -74,8 +74,8 @@ public class menu {
                         switch(option){
                             case 0:
                                 System.out.println("Thank you for using our system");
-                                utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
-                                utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
+                                utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
+                                utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                                 System.exit(0);
                                 break;
                             case 1: 
@@ -101,8 +101,8 @@ public class menu {
                         switch(option){
                             case 0:
                                 System.out.println("Thank you for using our system");
-                                utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
-                                utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
+                                utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
+                                utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                                 System.exit(0);
                                 break;
                             case 1: System.out.println("Register");
@@ -128,8 +128,8 @@ public class menu {
                         break;
                 
                     case 0: 
-                        utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
-                        utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
+                        utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
+                        utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                         System.exit(0);
                         break;
                     default:
@@ -206,7 +206,7 @@ public class menu {
         
         
         
-    private static String register(String name, String surname, Integer idUser) throws Exception { //AÑADIR EL EXISTING USERNAME
+    private static void register(String name, String surname, Integer idUser) throws Exception { //AÑADIR EL EXISTING USERNAME
         //autogenerate username
         User user = new User();
         String trashcan;
@@ -252,8 +252,6 @@ public class menu {
          user.setRole(id);
          user.setPassword(password);
          user.setUsername(username);
-         return user.toString();
-        
     }
 
     // Coger username y password, se la pasamos al server y compruebe --> si bien que me envíe un id y si no pues que me invie un -1
