@@ -64,8 +64,28 @@ public class menu {
                         //id = login();
                         //patientMenu(id);
                         Patient p = createPatient();
-                        System.out.println("Your going to record your ECG and EMG signals");
-                        utilities.CommunicationWithServer.recordSignal(p, 100,printWriter);
+                        do{
+                        System.out.println("Choose an option[0-1]:");
+                        System.out.println("\n1.Record Signal \n0. Exit");
+                        option = sc.nextInt();
+                        
+                        printWriter.println(option);
+                        
+                        switch(option){
+                            case 0:
+                                System.out.println("Thank you for using our system");
+                                utilities.CommunicationWithServer.exitFromServer(printWriter, bf);
+                                utilities.CommunicationWithServer.ReleaseResources(inputStream, outputStream, socket);
+                                System.exit(0);
+                                break;
+                            case 1: 
+                                System.out.println("Your going to record your ECG and EMG signals");
+                                utilities.CommunicationWithServer.recordSignal(p, 100,printWriter);
+                                break;
+                            
+                            }
+                        } while(option != 0);
+                        
                         break;
                     case 2:
                         //id = login();
