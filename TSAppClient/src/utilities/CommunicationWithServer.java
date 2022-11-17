@@ -48,7 +48,7 @@ public class CommunicationWithServer {
          pw.println(doctor.toString());
     }
     
-    public static void sendPatient(Socket socket,PrintWriter pw,Patient patient) {
+    public static void sendPatient(PrintWriter pw,Patient patient) {
         pw.println(patient.toString());
     }
     
@@ -56,11 +56,13 @@ public class CommunicationWithServer {
         printWriter.println(signal.toString());
     }
     
-    public static boolean receivePatient(Socket socket, BufferedReader bf){
-        boolean recieved = true;
+     public static void sendUser(PrintWriter printWriter, User user) {
+        printWriter.println(user.toString());
+    }
+    
+    public static Patient receivePatient(Socket socket, BufferedReader bf){
+        Patient p = new Patient();
         try{
-            Patient p = new Patient();
-        
             String line = bf.readLine();
             line=line.replace("{", "");
             line=line.replace("Patient", "");
@@ -114,15 +116,14 @@ public class CommunicationWithServer {
             }
             System.out.println("Patient received:");
             System.out.println(p.toString());
-        }catch(IOException exception){
-            recieved = false;
+        }catch(IOException ex){
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return recieved; 
+        return p; 
     }
     
     
-    public static boolean receiveDoctor(BufferedReader bufferReader){
-        boolean recieved = true; 
+    public static Doctor receiveDoctor(BufferedReader bufferReader){
         Doctor d= new Doctor();
         try{
             String line = bufferReader.readLine();
@@ -147,10 +148,10 @@ public class CommunicationWithServer {
             }
             System.out.println("Doctor recieved:");
             System.out.println(d.toString());
-        }catch(IOException exception){
-            recieved = false;
+        }catch(IOException ex){
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return recieved; 
+        return d;
     }
     
     
@@ -274,7 +275,7 @@ public class CommunicationWithServer {
     }
     
     
-    public static void receivePatientList(Socket socket,BufferedReader bf){
+    public static List<String> receivePatientList(Socket socket,BufferedReader bf){
         List<String> patientList = new ArrayList();
         boolean stop= true;
         try {
@@ -287,14 +288,11 @@ public class CommunicationWithServer {
                }else{
                    stop=false;
                }
-           }   
-            System.out.println("after while");
-            for(int i =0;i<patientList.size();i++){
-                System.out.println(patientList.get(i));
-            }
+           }
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return patientList;
     }
     
     public static void exitFromServer(InputStream inputStream, OutputStream outputStream, Socket socket ){

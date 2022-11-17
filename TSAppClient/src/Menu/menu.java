@@ -27,191 +27,62 @@ import pojos.Patient;
 import pojos.Signal;
 import pojos.User;
 
-import utilities.*;
 
 public class menu {
    
      
-       
-    
+    public static Socket socket = new Socket();
+    public static InputStream inputStream = null;
+    public static OutputStream outputStream = null;
+    public static InputStream console = (System.in);
 
   
     public static void main(String[] args) throws Exception {
         try {
-            Socket socket = new Socket("localhost",9000);
-            InputStream console = (System.in);
-            InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
+            socket = new Socket("localhost",9000);
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
             PrintWriter printWriter = new PrintWriter (outputStream,true);
             BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
             
-        Scanner sc = new Scanner(System.in);
         int option;
         String trashcan;
-        int id=0;
         int choice=1;
 	
             do {
                 try {
-                    System.out.println("Welcome to Telesomnia. Choose Your Role");
-                    System.out.println("1. Patient");
-                    System.out.println("2. Doctor");
+                    System.out.println("Welcome to Telesomnia.");
+                    System.out.println("1. Register");
+                    System.out.println("2. Login");
                     System.out.println("0. Exit");
-                    choice = sc.nextInt();
+                    choice = bf.read();
                     printWriter.println(choice);
                     switch(choice) {
-                    case 1:
-                        //id = login();
-                        //patientMenu(id);
-                        Patient p = createPatient();
-                        do{
-                        System.out.println("Choose an option[0-1]:");
-                        System.out.println("\n1.Record Signal \n0. Exit");
-                        option = sc.nextInt();
-                        
-                        printWriter.println(option);
-                        
-                        switch(option){
-                            case 0:
-                                System.out.println("Thank you for using our system");
-                                utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
-                                utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
-                                System.exit(0);
-                                break;
-                            case 1: 
-                                System.out.println("Your going to record your ECG and EMG signals");
-                                utilities.CommunicationWithServer.recordSignal(p, 100,printWriter);
-                                break;
-                            
-                            }
-                        } while(option != 0);
-                        
-                        break;
-                    case 2:
-                        //id = login();
-                        //doctorMenu(id);
-                        do{
-                        System.out.println("Choose an option[0-4]:");
-                        System.out.println("\n1.Register \n2. Register a new patient \n3. Edit Patient \n4. Show my Patients \n0. Exit");
-                        option = sc.nextInt();
-                        
-                        printWriter.println(option);
-                        Patient p_createdbyDoc = new Patient();
-                        
-                        switch(option){
-                            case 0:
-                                System.out.println("Thank you for using our system");
-                                utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
-                                utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
-                                System.exit(0);
-                                break;
-                            case 1: System.out.println("Register");
-                                Doctor d = createDoctor();
-                                utilities.CommunicationWithServer.sendDoctor(socket, printWriter, d);
-                                break;
-                            case 2: System.out.println("Register a new Patient");
-                                p_createdbyDoc = createPatient();
-                                utilities.CommunicationWithServer.sendPatient(socket, printWriter, p_createdbyDoc);
-                                break;
-                            case 3:
-                                System.out.println("Edit Patient");
-                                p_createdbyDoc = editPatient(p_createdbyDoc);
-                                System.out.println("back in the doctor swith case 3");
-                                //utilities.CommunicationWithServer.sendPatient(socket, printWriter, p_createdbyDoc);
-                                break;
-                            case 4:
-                                System.out.println("Show my Patients");
-                                utilities.CommunicationWithServer.receivePatientList(socket, bf);
-                                break;
-                            }
-                        } while(option != 0);
-                        break;
-                
-                    case 0: 
-                        utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
-                        utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
-                        System.exit(0);
-                        break;
-                    default:
-                        System.out.println("Not a valid option.");
-                        break;
+                        case 1:
+                            System.out.println("Introduce your personal data: ");
+                            Patient p = createPatient(bf, printWriter);
+                            patientMenu(socket, bf, printWriter, p.getUserId());
+                            break;
+                        case 2:
+                            login(socket, bf, printWriter);
+                            break;
                     }
-                
                 } catch (Exception e) {
-                        trashcan = sc.next();
+                        trashcan = bf.readLine();
                         System.out.println("Please introduce a valid option.");
                 }
             }while(choice != 0);
-    
         } catch (IOException ex) {
             Logger.getLogger(menu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-        
-	
-        
-        public static void patientMenu(Integer userID) throws Exception{
-		Scanner sc = new Scanner (System.in);
-		Patient patient = null;
-                String trashcan;
-                int option=0;
-		do{
-
-			int a = 0;
-                      
-			// Enviar patient id al server y que me devuelva un patient
-			System.out.println("Hello Mr/Ms "+patient.getSurname());
-			System.out.println("Choose an option [0-3]:"
-					+ "\n1. Start recording \n2. Stop recording \n3. Show my recordings \n0.Exit");
-			List<Signal> signals = new ArrayList<>();
-
-			do {
-				try {
-					option = sc.nextInt();
-					a = 1;
-				} catch (Exception e) {
-					trashcan = sc.next();
-					System.out.println("Please input a valid option.");
-				}
-			} while (a==0);
-
-			switch (option) {
-				case 0:
-					System.out.println("Thank you for using our system");
-					// Desconectar 
-					System.exit(0);
-				case 1:
-                                    
-					System.out.println("You can start recording your signal");
-					
-					break;
-				case 2:
-					System.out.println("You can stop recording your signal");
-		
-					break;
-				case 3:
-					System.out.println("Please enter your medical card:");
-                                        int medCard = Integer.parseInt(sc.next());
-                                        System.out.println("Here you can see all your signals recorded");
-                                        showSignals(patient);	
-					break;
-				default:
-					System.out.println("Not a valid option.");
-					break;
-			}		
-		}while(true);
-	}
-        
-        
-        
-        
-        
-    private static void register(String name, String surname, Integer idUser) throws Exception { //AÑADIR EL EXISTING USERNAME
+       
+    private static void register(Integer medcard, Integer idUser) throws Exception { //AÑADIR EL EXISTING USERNAME
         //autogenerate username
         User user = new User();
         String trashcan;
         Scanner sc = null;
-        String username = ""+name.charAt(0)+"."+surname+""+Integer.valueOf(surname.substring(0, 1));
+        String username = Integer.toString(medcard);
         //autogenerated password
         String[] symbols = {"0", "1", "9", "7", "K", "Q", "a", "b", "c", "U","w","3","0"};
         int length = 14;
@@ -223,126 +94,168 @@ public class menu {
              sb.append( symbols[indexRandom] );
         }
         String password = sb.toString();
-/* AL SEVER
-        Pedir roles 
-*/
-		//ask the user for a role
-		System.out.println("Type the chosen role ID: ");
-		Integer id = null;
-		int a=0;
-		do {
-			try {
-				id = sc.nextInt();
-                                
-				a=1;
-			} catch (Exception e) {
-				trashcan = sc.next();
-				System.out.println("Not a valid role id. Try again.");
-			}
-		} while (a==0);
-
-		
-                
         //generate the hash
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
         byte[] hash = md.digest();
         System.out.println("The autogenerated username is:"+ username);
         System.out.println("The autogenerated password is:"+ password);
-         user.setRole(id);
-         user.setPassword(password);
-         user.setUsername(username);
-    }
-
-    // Coger username y password, se la pasamos al server y compruebe --> si bien que me envíe un id y si no pues que me invie un -1
-    private static int login() throws Exception{
-        Scanner sc = new Scanner (System.in);
-        User user = new User();
-        int id =0;
-        do{
-        System.out.println("Please enter your username and password:");
-        System.out.println("Username:");
-        String username = sc.next();
-        System.out.println("Password:");
-        String password = sc.next();
         user.setPassword(password);
         user.setUsername(username);
-        // parte del server 
-        }while (id == -1);
-        return id;
     }
-    
-    
-    public static void changePassword() {
-        Scanner sc = new Scanner (System.in);
-        try{
-            System.out.println("Please enter your username and password:");
-            System.out.println("Username:");
-            String username = sc.next();
-            System.out.println("Password:");
-            String password = sc.next();
-            User user = new User (username, password);
-            // Enviar al server --> busque el user
-            System.out.println("Introduce the new password: ");
-            String newPassword1 = sc.next();
-            System.out.println("Confirm your new password: ");
-            String newPassword2 = sc.next();
-            if(newPassword1.equals(newPassword2)) {
-                    // Mandamos al server 
-                    System.out.println("Password updated");
-            } else {
-                    System.out.println("Error. Password confirmation does not match");
-            }
-        }catch(Exception ex) {
-                ex.printStackTrace();
+
+    private static void login(Socket socket, BufferedReader bf, PrintWriter pw) throws Exception{
+        User user = new User();
+        System.out.println("Please enter your username and password:");
+        System.out.println("Username:");
+        String username = bf.readLine();
+        System.out.println("Password:");
+        String password = bf.readLine();
+        user.setPassword(password);
+        user.setUsername(username);
+        utilities.CommunicationWithServer.sendUser(pw, user);
+        if(user == null) {
+            System.out.println("Wrong username or password");
+            return;
+        } else if(user.getRole() == 1){
+                patientMenu(socket, bf, pw, user.getUserId());
+        } else{
+                doctorMenu(socket, bf, pw, user.getUserId());
         }
     }
     
- //For the final practice this will be void, but right now, as the db doesn't work, it will return a patient.  
- public static Patient createPatient () throws NotBoundException, Exception {
+    
+    public static void patientMenu(Socket socket, BufferedReader bf, PrintWriter pw, int userId) throws Exception{
+        String trashcan;
+        int option=0;
+        do{
+            int a = 0;
+            
+            Patient patient = utilities.CommunicationWithServer.receivePatient(socket, bf);
+            System.out.println("Hellos Mr/Ms "+patient.getSurname());
+            System.out.println("Choose an option [0-3]:"
+                            + "\n1. Start recording \n2. Stop recording \n3. Consult my recordings \n4. Change BITalino MAC address \n0.Exit");
+            do {
+                try {
+                    option = bf.read();
+                    a = 1;
+                } catch (Exception e) {
+                    trashcan = bf.readLine();
+                    System.out.println("Please select a valid option.");
+                }
+            } while (a==0);
 
-        Scanner sc = new Scanner (System.in);
+            switch (option) {
+                case 0:
+                    System.out.println("Thank you for using our system");
+                    utilities.CommunicationWithServer.ReleaseResources(pw, bf);
+                    utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
+                    break;
+                case 1:
+                    System.out.println("Your going to record your ECG and EMG signals");
+                    utilities.CommunicationWithServer.recordSignal(patient, 100,pw);
+                    break;
+                case 2: //esta igual sobra
+                    System.out.println("You can stop recording your signal");
+
+                    break;
+                case 3:
+                    System.out.println("Here you can consult all your signals");
+                    showSignals(selectPatient(socket, bf, pw));	
+                    break;
+                case 4:
+                    System.out.println("Change BITalino MAC address");
+                    updateMacAddress(bf, pw, patient);
+                    break;
+                default:
+                    System.out.println("Not a valid option.");
+                    break;
+            }		
+        }while(true);
+    }
+        
+        
+    private static void doctorMenu(Socket socket, BufferedReader bf, PrintWriter pw, int userId) throws Exception {
+        String trashcan;
+        int option=0;
+        do{
+            int a = 0;
+            
+            Doctor doctor = utilities.CommunicationWithServer.receiveDoctor(bf);
+            System.out.println("Hellos Dr. " + doctor.getDsurname());
+            System.out.println("Choose an option[0-2]:");
+            System.out.println("\n1.Register a new Doctor \n2. See list of all my patients \n3. Edit Patient \n4. Consult recordings of a patient \n 0. Exit");
+            do {
+                try {
+                    option = bf.read();
+                    a = 1;
+                } catch (Exception e) {
+                    trashcan = bf.readLine();
+                    System.out.println("Please select a valid option.");
+                }
+            } while (a==0);
+       
+            switch(option) {
+            case 0:
+                System.out.println("Thank you for using our system");
+                utilities.CommunicationWithServer.ReleaseResources(pw, bf);
+                utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
+                break;
+            case 1: 
+                System.out.println("Register a new Doctor");
+                createDoctor(bf, pw);
+                break;
+            case 2:
+                System.out.println("See list of all my patients");
+                utilities.CommunicationWithServer.receivePatientList(socket, bf);
+                break;
+            case 3:
+                System.out.println("Edit Patient");
+                editPatient(bf, pw, selectPatient(socket, bf, pw));
+                break;
+            case 4:
+                System.out.println("Consult recordings of a patient");
+                showSignals(selectPatient(socket, bf, pw));
+                break;
+            case 5:
+                System.out.println("Delete Patient");
+                deletePatient(socket, bf, pw);
+                break;
+            default:
+                System.out.println("Not a valid option.");
+                break;
+            }
+        } while(true);
+    }    
+
+    
+    public static Patient createPatient (BufferedReader br, PrintWriter pw) throws NotBoundException, Exception {
         Patient p = new Patient();
 
         System.out.println("Please, input the patient info:");
         System.out.print("Name: "); 
-        String name = sc.next();
+        String name = br.readLine();
         p.setName(name);
         
         System.out.print("Surname: "); 
-        String surname = sc.next();
+        String surname = br.readLine();
         p.setSurname(surname);
         
         System.out.print("Medical card number: "); 
         Integer medCardNumber=1; 
         Boolean validMedNumber = false;
-        
-        
-        /*
-        do { 
-            try {
-            medCardNumber = sc.nextInt(); 
-            validMedNumber = true;
-            }catch(Exception e) {
-                    System.out.println("Please introduce a valid medical card number which only contains numbers");
-            }
-            System.out.print("Error. Please introduce medical card number: "); 
-        } while (patientman.selectPatient(medCardNumber) != null&&(!validMedNumber) );
-        */
         do{
-        try {
-            medCardNumber = sc.nextInt(); 
-            validMedNumber = true;
+            try {
+                medCardNumber = br.read(); 
+                validMedNumber = true;
             }catch(Exception e) {
                     System.out.println("Please introduce a valid medical card number which only contains numbers");
             }
-        
         }while (validMedNumber = false);
-        // COmprobar que no hay un paciente con la medical card number
         p.setMedical_card_number(medCardNumber);
 
         System.out.print("Gender: ");
-        String gender = sc.next();   
+        String gender = br.readLine();   
         do{
             if (gender.equalsIgnoreCase("male")) {
                     gender = "Male";
@@ -350,202 +263,168 @@ public class menu {
                     gender = "Female";
             } else{
                  System.out.print("Not a valid gender. Please introduce a gender (Male or Female): ");
-                 gender = sc.next();
+                 gender = br.readLine();
             }
-                
-            }while (!(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female")));
-            
+        }while (!(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female")));
         p.setGender(gender);
         
-
-
         System.out.print("Date of birth [yyyy-mm-dd]: ");	
-        String birthdate = sc.next();
+        String birthdate = br.readLine();
         Date bdate; 
         try {
             bdate = Date.valueOf(birthdate);
             if (bdate.before(Date.valueOf(LocalDate.now())) || bdate.equals(Date.valueOf(LocalDate.now()))) {
-                    p.setDob(bdate);
+                p.setDob(bdate);
             } else {
-                    do {
-                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");
-                            birthdate = sc.next();
-                            bdate = Date.valueOf(birthdate);
-                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
-                    p.setDob(bdate);
+                do {
+                    System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");
+                    birthdate = br.readLine();
+                    bdate = Date.valueOf(birthdate);
+                } while ((!(bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now()))));
+                p.setDob(bdate);
             }
         } catch (Exception e) {
             int b=0;
-            do {
-                    try {	
-                            System.out.print("Please introduce a valid date format [yyyy-mm-dd]: ");
-                            birthdate = sc.next();
-                            bdate = Date.valueOf(birthdate); 
-
-                            if (bdate.before(Date.valueOf(LocalDate.now())) || bdate.equals(Date.valueOf(LocalDate.now()))) {
-                                    p.setDob(bdate);
-                            } else {
-                                    do {
-                                            System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");							
-                                            birthdate = sc.next();
-                                            bdate = Date.valueOf(birthdate);
-                                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
-                                    p.setDob(bdate);
-                            }
-                            b=1;
-                    } catch (Exception e1) {
-                    }
+            do {	
+                System.out.print("Please introduce a valid date format [yyyy-mm-dd]: ");
+                birthdate = br.readLine();
+                bdate = Date.valueOf(birthdate);
+                if (bdate.before(Date.valueOf(LocalDate.now())) || bdate.equals(Date.valueOf(LocalDate.now()))) {
+                        p.setDob(bdate);
+                } else {
+                    do {
+                        System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");							
+                        birthdate = br.readLine();
+                        bdate = Date.valueOf(birthdate);
+                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
+                    p.setDob(bdate);
+                }
+                b=1;
             } while (b==0);
         }
 
         System.out.print("Address: ");				
-        String address = sc.next();
+        String address = br.readLine();
         p.setAddress(address);
 
-        System.out.print("Email: ");// SOmetimes it works and others it skips to asking for macaddress				
-        String email = sc.next();
+        System.out.print("Email: ");			
+        String email = br.readLine();
         p.setEmail(email);
         
         System.out.print("Diagnosis: "); 
-        String diagnosis = sc.next();
+        String diagnosis = br.readLine();
         p.setDiagnosis(diagnosis);
         
         System.out.print("Allergies: "); 
-        String allergies = sc.next();
+        String allergies = br.readLine();
         p.setAllergies(allergies);
         
         System.out.print("Bitalino MACAddress: ");				
-        String mac = sc.next();
+        String mac = br.readLine();
         p.setMacAddress(mac);
         
-        //System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
-        //register(p.getName(),p.getSurname(), p.getMedical_card_number()); 
-        //System.out.println("The patient was succesfully added to the database");
-        return p;
+        System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
+        pw.println("Register");
+        utilities.CommunicationWithServer.sendPatient(pw, p);
+        String line = br.readLine();
+        if (line.equals("Patient successfully registered")){
+            System.out.println("Success");
+            return p;
+        } else{
+            System.out.println("Patient not registered");
+            return null;
+        }
     }
     
 
-    private static Patient selectPatient() throws Exception{
-        List<Patient> patientList = new ArrayList<Patient>();
-        // que el server nos envie una lista de pacietnes
+    private static Patient selectPatient(Socket socket, BufferedReader br, PrintWriter pw) throws Exception{
+        //Show list with all patients.
+        List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(socket, br);
+        for(int i =0;i<CompletePatientList.size();i++){
+                System.out.println(CompletePatientList.get(i));
+        }
+        //Chose a Patient
+        List<Patient> patientList = new ArrayList();
         Patient patient = null;
-        Scanner sc = new Scanner(System.in);
         while(patientList.isEmpty()){
             Integer medCard=null;
             System.out.println(patientList.toString());
             System.out.println("Enter the medical card number of the chosen patient: ");
             try{
-                medCard = Integer.parseInt(sc.next());
+                medCard = br.read();
             }catch(Exception ex){
                 System.out.println("Not a valid medical card number ONLY NUMBERS");
             }
-            
+            pw.print(medCard);
+            patient = utilities.CommunicationWithServer.receivePatient(socket, br);
         }
-        // Eviar medcard al server busque y nos devuelva un paciente
         return patient; 
     }
 
-    private static void deletePatient() throws Exception {
-        // que el server me de lista 
-        Scanner sc = new Scanner (System.in);
-        
+    
+    private static void deletePatient(Socket socket, BufferedReader br, PrintWriter pw) throws Exception {
+        //Show list with all patients.
+        List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(socket, br);
+        for(int i =0;i<CompletePatientList.size();i++){
+                System.out.println(CompletePatientList.get(i));
+        }
+        //Chose a Patient to delete
         System.out.println("Introduce de medical card number of the patient to delete: ");
-        String medcard = sc.next();
-        
-        // Enviar al server y que busque y elimine
+        String medcard = br.readLine();
+        pw.println("Medical Card= " + medcard);
     }
     
-    //For the final practice this will be void, but right now, as the db doesn't work, it will return a patient.  
-    public static Doctor createDoctor() throws Exception{
+
+    public static void createDoctor(BufferedReader br, PrintWriter pw) throws Exception{
         Doctor d = new Doctor();
-        Scanner sc = new Scanner (System.in);
 
         System.out.println("Please, input the doctor info:");
         System.out.print("Name: ");
-        String name = sc.next();
+        String name = br.readLine();
         d.setDname(name); 
 
         System.out.print("Surname: ");
-        String surname = sc.next();
+        String surname = br.readLine();
         d.setDsurname(surname);
         
         System.out.print("Email: ");
-        String email = sc.next();
+        String email = br.readLine();
         d.setDemail(email);
         
         System.out.print("Id: ");
-        int id = sc.nextInt();
+        int id = br.read();
         d.setDoctorId(id);
         
-        //System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
-        return d;
-        //register(d.getDname(), d.getDsurname(), d.getDoctorId()); 
-        //System.out.println("The doctor was succesfully added to the database");
+        System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
+        pw.println("Register Doctor");
+        utilities.CommunicationWithServer.sendDoctor(socket, pw, d);
+        String line = br.readLine();
+        if (line.equals("Doctor successfully registered")){
+            System.out.println("Success");
+        } else{
+            System.out.println("Doctor not registered");
+        }
     }
     
-    
-   
-    
-    private static void doctorMenu(Integer d) throws Exception {
-        Patient patient = selectPatient();
-        Scanner sc = new Scanner (System.in);
-        int option=0;
-        String trashcan;
-        do {
-            System.out.println("Choose an option[0-2]:");
-            System.out.println("\n1.Add a patient \n2. Edit Patient \n3. Consult recordings \\n 0. Exit");
-
-            int a = 0;
-            do {
-                try {
-                        option = sc.nextInt();
-                        a = 1;
-                } catch (Exception e) {
-                        trashcan = sc.next();
-                        System.out.println("Please input a valid option.");
-                }
-            } while (a==0);
-
-            switch(option) {
-            case 0:
-                    System.out.println("Thank you for using our system");
-                    // Desconectar --> release resources y todo
-                    System.exit(0);
-            case 1: System.out.println("Register a new Patient");
-                    createPatient();
-            case 2:
-                    System.out.println("Edit Patient");
-                    editPatient(patient);
-                    break;
-            case 3:
-                    System.out.println("Consult recordings");
-                    showSignals(patient);
-                    break;
-            }
-        } while(true);
-    }
     
     private static void showSignals (Patient P) throws Exception{
          Scanner sc = new Scanner(System.in);
          String signalFilename;
         // Saca listado de todas las señales  del server
                     
-                    System.out.println("Introduce filename of the signal:");
-                    signalFilename=sc.next();
-                    // Enviamos filename al server y que la busque
+        System.out.println("Introduce filename of the signal:");
+        signalFilename=sc.next();
+        // Enviamos filename al server y que la busque
     }
     
-    private static Patient editPatient (Patient p) throws Exception{
-        Scanner sc = new Scanner(System.in);
+    private static void editPatient (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
         int option=1;
-        String trashcan;
         String update;
-        
-                
+                 
         while(option != 0) {
-            System.out.println("Choose an option[0-3]:");
-            System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies \n3. Bitalino MacAddres");
-            option = sc.nextInt();
+            System.out.println("Choose an option[0-2]:");
+            System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies");
+            option = br.read();
             
             switch(option) {
                 case 0:
@@ -553,28 +432,35 @@ public class menu {
                     break;
                 case 1:
                         System.out.println("Write diagnosis:");
-                        update = sc.next();
-                        p.setDiagnosis(update); //Esto se hará por db
-                        // Mandar diagnosis al server y que haga update
+                        update = br.readLine();
+                        pw.println("Update diagnosis");
+                        p.setDiagnosis(update);
+                        //pw.println(update);
+                        utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
                 case 2:
                         System.out.println("Write Allergies:");
-                        update = sc.next();
-                        p.setAllergies(update); //Esto se hará por db
-                        // Mandar diagnosis al server y que haga update
-                        break;
-                case 3:
-                        System.out.println("Write Bitalino MacAddress:");
-                        update = sc.next();
-                        p.setMacAddress(update); //Esto se hará por db
-                        // Mandar diagnosis al server y que haga update
+                        update = br.readLine();
+                        pw.println("Update allergies");
+                        p.setAllergies(update);
+                        //pw.println(update);
+                        utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
                 default:
-                     System.out.println("not valid option");
+                     System.out.println("Not valid option");
                      break;
             }
         }
-        System.out.println("out of the while");
-        return p;
+    }
+    
+    private static void updateMacAddress (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
+        String update;
+        
+        System.out.println("Write Bitalino MacAddress:");
+        update = br.readLine();
+        pw.println("Update Bitalino MacAddress");
+        p.setMacAddress(update);
+        //pw.println(update);      
+        utilities.CommunicationWithServer.sendPatient(pw, p);
     }
 }
