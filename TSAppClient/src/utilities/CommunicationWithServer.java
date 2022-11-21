@@ -7,13 +7,16 @@ package utilities;
 
 import BITalino.*;
 import java.io.*;
+import static java.lang.String.format;
 import java.net.Socket;
-import java.text.*;
+import static java.text.MessageFormat.format;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
 import pojos.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 /**
  *
  * @author agarc
@@ -121,7 +124,7 @@ public class CommunicationWithServer {
         try{
             String line = bufferReader.readLine();
             line=line.replace("{", "");
-            line=line.replace("Patient", "");
+            line=line.replace("Doctor", "");
             String[] atribute = line.split(",");
             for (int i =0;i <atribute.length; i++){
                 String[] data2 = atribute[i].split("=");
@@ -145,6 +148,59 @@ public class CommunicationWithServer {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return d;
+    }
+    
+    
+    public static Signal receiveSignal(BufferedReader br){
+        Signal s = new Signal();
+        try {
+        String line = br.readLine();
+        line=line.replace("{", "");
+        line=line.replace("Signal", "");
+        String[] atribute = line.split(",");
+        for (int i =0;i <atribute.length; i++){
+            String[] data2 = atribute[i].split("=");
+            for (int j =0;j <data2.length - 1; j++){
+                data2[j]=data2[j].replace(" ", "");
+                switch(data2[j]){
+                    case "signalId":
+                        s.setSignalId(Integer.parseInt(data2[j+1]));
+                        break;
+                    case "ECG_values":
+                        //no estoy segura de si están separados por una coma o un espacio
+                        String[] separatedString = data2[j+1].split(",");
+                        int[] ECG = new int[separatedString.length];
+                        for(int k=0; k<separatedString.length; k++){
+                            ECG[k] = Integer.parseInt(separatedString[k]);
+                        }
+                        s.setECG_values(ECG);
+                        break;
+
+                    case "EMG_values":
+                        separatedString = data2[j+1].split(",");
+                        int[] EMG = new int[separatedString.length];
+                        for(int k=0; k<separatedString.length; k++){
+                            EMG[k] = Integer.parseInt(separatedString[k]);
+                        }
+                        s.setEMG_values(EMG);
+                        break;
+                    case "startDate":
+                        try {
+                            s.setStartDate(format.parse(data2[j+1]));
+                        } catch (ParseException ex) {
+                            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        break;
+                    case "sname":
+                        s.setSname(data2[j+1]);
+                        break;
+                }
+            }
+        }
+        } catch (IOException ex) {
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return s;
     }
     
     public static User receiveUser (BufferedReader br){
@@ -274,17 +330,16 @@ public class CommunicationWithServer {
     
     
     // This method is going to return the filenames of all the signals recorded:
-    public String[] ShowSignals(BufferedReader bf, PrintWriter pw, Patient p){
+    public static String[] ShowSignals(BufferedReader bf, PrintWriter pw, Patient p){
         try {
             String[] filenames = null;
-            List singals = new ArrayList();
             // Pedimos al server que nos envie la lista de señales:
             pw.println("Send Signals");
             pw.println("Patient= "+p.getMacAddress());
             // VOY A ASUMIR QUE SE ENVIAN LOS FILENAME SEPARADOS POR \n
             String line = bf.readLine();
             while ((line = bf.readLine()) != null) {
-                filenames =line.split("/n");
+                filenames =line.split("\n");
             }
             return filenames;
         } catch (IOException ex) {

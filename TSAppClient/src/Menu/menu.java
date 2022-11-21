@@ -138,7 +138,7 @@ public class menu {
                     break;
                 case 3:
                     System.out.println("Here you can consult all your signals");
-                    showSignals(selectPatient(bf, pw));	
+                    showSignals(bf, pw, selectPatient(bf, pw));	
                     break;
                 case 4:
                     System.out.println("Change BITalino MAC address");
@@ -192,7 +192,7 @@ public class menu {
                 break;
             case 4:
                 System.out.println("Consult recordings of a patient");
-                showSignals(selectPatient(bf, pw));
+                showSignals(bf, pw, selectPatient(bf, pw));
                 break;
             case 5:
                 System.out.println("Delete Patient");
@@ -384,14 +384,38 @@ public class menu {
     }
     
     
-    private static void showSignals (Patient P) throws Exception{
-         Scanner sc = new Scanner(System.in);
-         String signalFilename;
-        // Saca listado de todas las señales  del server
-                    
-        System.out.println("Introduce filename of the signal:");
-        signalFilename=sc.next();
-        // Enviamos filename al server y que la busque
+    private static void showSignals (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
+        //Show list with all signals
+        String [] signalFilenames = utilities.CommunicationWithServer.ShowSignals(br, pw, p);
+        List<String> completeSignalList = new ArrayList();
+        for(int i =0;i<signalFilenames.length;i++){
+            completeSignalList.add(signalFilenames[i]);
+            System.out.println(completeSignalList.get(i));
+        }
+        List<Patient> patientList = new ArrayList();
+        Patient patient = null;
+        while(patientList.isEmpty()){
+            Integer medCard=null;
+            System.out.println(patientList.toString());
+            System.out.println("Enter the medical card number of the chosen patient: ");
+            try{
+                medCard = br.read();
+            }catch(Exception ex){
+                System.out.println("Not a valid medical card number ONLY NUMBERS");
+            }
+            pw.print(medCard);
+            patient = utilities.CommunicationWithServer.receivePatient(br);
+        }
+        //Choose a signal
+        List<String> signalList = new ArrayList<>();
+        Signal signal = null;
+        while(signalList.isEmpty()){
+            System.out.println(signalList.toString());
+            System.out.println("Introduce filename of the signal:");
+            String signalName = br.readLine();
+            pw.println(signalName);
+            signal = utilities.CommunicationWithServer.receiveSignal(br);
+        }
     }
     
     private static void editPatient (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
