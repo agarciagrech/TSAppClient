@@ -19,32 +19,25 @@ import pojos.*;
  * @author agarc
  */
 public class CommunicationWithServer {
-
-    public static Socket socket = new Socket();
-    public static InputStream inputStream = null;
-    public static OutputStream outputStream = null;
-               
     
-    public boolean connectToServer() {
+    public static Socket connectToServer() {
+        Socket socket = new Socket();
         try {
-            inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
-            BufferedReader br = new BufferedReader (new InputStreamReader(inputStream));
-            PrintWriter pw = new PrintWriter(outputStream,true);
-            int choice = br.read();
-            System.out.println("Please, introduce your role (1-patient/2-doctor): ");
-            pw.print(choice);
-            br.readLine();
-            if (br.readLine().equals("Connection stablished")){
-                return true;
-            }
+            InputStream inputStream = socket.getInputStream();
+            OutputStream outputStream = socket.getOutputStream();
+            PrintWriter printWriter = new PrintWriter (outputStream,true);
+            BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
+            System.out.println("Introduce your IP: ");
+            String ip = bf.readLine();
+            //printWriter.println(ip); //si queremos mandarle el ip al server
+            socket = new Socket(ip, 9000);
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        return false;
+        }
+        return socket;
     }
     
-    public static void sendDoctor(Socket socket,PrintWriter pw, Doctor doctor) {
+    public static void sendDoctor(PrintWriter pw, Doctor doctor) {
          pw.println(doctor.toString());
     }
     
@@ -56,11 +49,11 @@ public class CommunicationWithServer {
         printWriter.println(signal.toString());
     }
     
-     public static void sendUser(PrintWriter printWriter, User user) {
+    public static void sendUser(PrintWriter printWriter, User user) {
         printWriter.println(user.toString());
     }
     
-    public static Patient receivePatient(Socket socket, BufferedReader bf){
+    public static Patient receivePatient(BufferedReader bf){
         Patient p = new Patient();
         try{
             String line = bf.readLine();
@@ -154,6 +147,38 @@ public class CommunicationWithServer {
         return d;
     }
     
+    public static User receiveUser (BufferedReader br){
+        User u = new User();
+        try {
+        String line = br.readLine();
+        line=line.replace("{", "");
+        line=line.replace("User", "");
+        String[] atribute = line.split(",");
+        for (int i =0;i <atribute.length; i++){
+            String[] data2 = atribute[i].split("=");
+            for (int j =0;j <data2.length - 1; j++){
+                data2[j]=data2[j].replace(" ", "");
+                switch(data2[j]){
+                    case "username":
+                        u.setUsername(data2[j+1]);
+                        break;
+                    case "password":
+                        u.setPassword(data2[j+1]);
+                        break;
+                    case "role":
+                        u.setRole(Integer.parseInt(data2[j+1]));
+                        break;
+                    case "userId":
+                        u.setUserId(Integer.parseInt(data2[j+1]));
+                        break;
+                }
+            }
+        }
+        } catch (IOException ex) {
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return u;
+    }
     
     
     public static void recordSignal(Patient p, int samplingRate, PrintWriter pw) {
@@ -249,14 +274,8 @@ public class CommunicationWithServer {
     
     
     // This method is going to return the filenames of all the signals recorded:
-    public String[] ShowSignals(Patient p){
+    public String[] ShowSignals(BufferedReader bf, PrintWriter pw, Patient p){
         try {
-            socket = new Socket("localhost", 9000);
-            inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
-            PrintWriter pw = new PrintWriter(outputStream,true);
-            BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
-
             String[] filenames = null;
             List singals = new ArrayList();
             // Pedimos al server que nos envie la lista de señales:
@@ -275,7 +294,7 @@ public class CommunicationWithServer {
     }
     
     
-    public static List<String> receivePatientList(Socket socket,BufferedReader bf){
+    public static List<String> receivePatientList(BufferedReader bf){
         List<String> patientList = new ArrayList();
         boolean stop= true;
         try {
