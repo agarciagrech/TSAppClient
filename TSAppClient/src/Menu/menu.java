@@ -392,20 +392,6 @@ public class menu {
             completeSignalList.add(signalFilenames[i]);
             System.out.println(completeSignalList.get(i));
         }
-        List<Patient> patientList = new ArrayList();
-        Patient patient = null;
-        while(patientList.isEmpty()){
-            Integer medCard=null;
-            System.out.println(patientList.toString());
-            System.out.println("Enter the medical card number of the chosen patient: ");
-            try{
-                medCard = br.read();
-            }catch(Exception ex){
-                System.out.println("Not a valid medical card number ONLY NUMBERS");
-            }
-            pw.print(medCard);
-            patient = utilities.CommunicationWithServer.receivePatient(br);
-        }
         //Choose a signal
         List<String> signalList = new ArrayList<>();
         Signal signal = null;

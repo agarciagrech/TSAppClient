@@ -158,6 +158,8 @@ public class CommunicationWithServer {
         line=line.replace("{", "");
         line=line.replace("Signal", "");
         String[] atribute = line.split(",");
+        SimpleDateFormat  format = new SimpleDateFormat("dd/MM/yyyy");
+        
         for (int i =0;i <atribute.length; i++){
             String[] data2 = atribute[i].split("=");
             for (int j =0;j <data2.length - 1; j++){
