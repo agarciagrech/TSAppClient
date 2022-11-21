@@ -103,6 +103,7 @@ public class menu {
         user.setPassword(password);
         user.setUsername(username);
     }
+ 
 
     private static void login(Socket socket, BufferedReader bf, PrintWriter pw) throws Exception{
         User user = new User();
