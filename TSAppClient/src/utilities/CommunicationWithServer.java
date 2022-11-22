@@ -193,9 +193,6 @@ public class CommunicationWithServer {
                             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         break;
-                    case "sname":
-                        s.setSname(data2[j+1]);
-                        break;
                 }
             }
         }
