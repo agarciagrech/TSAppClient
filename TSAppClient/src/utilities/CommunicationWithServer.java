@@ -7,9 +7,7 @@ package utilities;
 
 import BITalino.*;
 import java.io.*;
-import static java.lang.String.format;
 import java.net.Socket;
-import static java.text.MessageFormat.format;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +30,6 @@ public class CommunicationWithServer {
             BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
             System.out.println("Introduce your IP: ");
             String ip = bf.readLine();
-            //printWriter.println(ip); //si queremos mandarle el ip al server
             socket = new Socket(ip, 9000);
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);

@@ -15,10 +15,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author agarc
- */
+
 public class Signal {
     private Integer signalId;
     private int[] ECG_values; 
@@ -35,7 +32,6 @@ public class Signal {
     }
     
     
-
     public int[] getECG_values() {
         return ECG_values;
     }
