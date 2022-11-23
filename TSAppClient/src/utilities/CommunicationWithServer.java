@@ -335,7 +335,7 @@ public class CommunicationWithServer {
             String[] filenames = null;
             // Pedimos al server que nos envie la lista de señales:
             pw.println("Send Signals");
-            pw.println("Patient= "+p.getMacAddress());
+            pw.println(p.getMedical_card_number());
             // VOY A ASUMIR QUE SE ENVIAN LOS FILENAME SEPARADOS POR \n
             String line = bf.readLine();
             while ((line = bf.readLine()) != null) {
