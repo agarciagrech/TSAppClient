@@ -31,7 +31,6 @@ public class Signal {
     public Signal() {
     }
     
-    
     public int[] getECG_values() {
         return ECG_values;
     }

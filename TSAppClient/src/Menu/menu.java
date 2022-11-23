@@ -130,7 +130,7 @@ public class menu {
                     break;
                 case 1:
                     System.out.println("Your going to record your ECG and EMG signals");
-                    utilities.CommunicationWithServer.recordSignal(patient, 100,pw);
+                    utilities.CommunicationWithServer.recordSignal(patient, pw);
                     break;
                 case 2: //esta igual sobra
                     System.out.println("You can stop recording your signal");

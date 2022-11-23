@@ -233,13 +233,12 @@ public class CommunicationWithServer {
     }
     
     
-    public static void recordSignal(Patient p, int samplingRate, PrintWriter pw) {
+    public static void recordSignal(Patient p, PrintWriter pw) {
         Frame[] frame;
         BITalino bitalino = null;
         Signal s = new Signal();
-        int[] ecg_values = new int[10];
-        int[] emg_values = new int[10];
-        
+        ArrayList<Integer> ecg_vals = new ArrayList<Integer>();
+        ArrayList<Integer> emg_vals = new ArrayList<Integer>();
         try {
             bitalino = new BITalino();
             // Code to find Devices
@@ -248,35 +247,40 @@ public class CommunicationWithServer {
 
             String macAddress = p.getMacAddress();
 
-            bitalino.open(macAddress, samplingRate);
+            bitalino.open(macAddress, 100);
 
-            int[] channelsToAcquire = {1,2}; //for EMG and ECG
+            int[] channelsToAcquire = {1, 2}; //for EMG and ECG
             bitalino.start(channelsToAcquire);
 
             //Read in total 10000000 times --> por que elegimos este num
-            for (int j = 0; j < 10; j++) {
-                //Each time read a block of 10 samples to make the trials easier, but we plan to change it
-                int block_size=1;
-                frame = bitalino.read(block_size);
+            //Each time read a block of 10 samples to make the trials easier, but we plan to change it
+            
+            int block_size = 16;
+            frame = bitalino.read(block_size);
 
-                System.out.println("size block: " + frame.length);
-
-                for (int i = 0; i < frame.length; i++) {
-                    ecg_values[j]=frame[i].analog[1];
-                    emg_values[j]=frame[i].analog[0];
-                    System.out.println(" seq: " + frame[i].seq + " "
-                            + frame[i].analog[0] + " seq: " + frame[i].seq + " "
-                            + frame[i].analog[1] + " ");
-                }
+            //System.out.println("size block: " + frame.length);
+            //pw.println("ECG:");
+            for (int i = 0; i < frame.length; i++) {
+                pw.println(frame[i].analog[0]);
+                System.out.println(frame[i].analog[0]);
+                //ecg_vals.add(frame[i].analog[0]);
             }
-            System.out.println(Arrays.toString(ecg_values));
-            System.out.println(Arrays.toString(emg_values));
-            s.setECG_values(ecg_values);
-            s.setEMG_values(emg_values);
-            //stop acquisition
+            pw.println("END OF ECG");
+
+            //pw.println("EMG:");
+            //frame = bitalino.read(block_size);
+            for (int a = 0; a < frame.length; a++) {
+                pw.println(frame[a].analog[1]);
+                System.out.println(frame[a].analog[1]);
+                //emg_vals.add(frame[a].analog[1]);
+            }
+            pw.println("END OF EMG");
+
+            //pw.println("ECG: " + ecg_vals.toString() + " // " + "EMG: " + emg_vals.toString());
+            pw.println("END");
+
             bitalino.stop();
 
-            pw.println("ECG: " + Arrays.toString(ecg_values) + " // " + "EMG: " + Arrays.toString(emg_values));
             //Type of signal + date ".txt"
             Calendar c = Calendar.getInstance();
             String day=Integer.toString(c.get(Calendar.DATE));
