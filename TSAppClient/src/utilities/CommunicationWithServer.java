@@ -24,13 +24,16 @@ public class CommunicationWithServer {
     public static Socket connectToServer() {
         Socket socket = new Socket();
         try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Introduce your IP: ");
+            String ip = br.readLine();
+            socket = new Socket(ip, 9000);
             InputStream inputStream = socket.getInputStream();
             OutputStream outputStream = socket.getOutputStream();
             PrintWriter printWriter = new PrintWriter (outputStream,true);
             BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
-            System.out.println("Introduce your IP: ");
-            String ip = bf.readLine();
-            socket = new Socket(ip, 9000);
+            
+            
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
