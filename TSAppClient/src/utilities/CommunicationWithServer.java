@@ -42,6 +42,7 @@ public class CommunicationWithServer {
     
     public static void sendDoctor(PrintWriter pw, Doctor doctor) {
          pw.println(doctor.toString());
+         System.out.println("doctor sended");
     }
     
     public static void sendPatient(PrintWriter pw,Patient patient) {
@@ -127,6 +128,7 @@ public class CommunicationWithServer {
             String line = bufferReader.readLine();
             line=line.replace("{", "");
             line=line.replace("Doctor", "");
+            line=line.replace("}", "");
             String[] atribute = line.split(",");
             for (int i =0;i <atribute.length; i++){
                 String[] data2 = atribute[i].split("=");
