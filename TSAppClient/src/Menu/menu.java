@@ -57,7 +57,7 @@ public class menu {
                     System.out.println("after pw");
                     switch(choice) {
                         case 0:
-                            utilities.CommunicationWithServer.ReleaseResources(printWriter, br);
+                            utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
                             utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                         case 1:
                             System.out.println("inside switch 1");
@@ -71,7 +71,7 @@ public class menu {
                             System.out.println("Please introduce a valid option.");
                     }
                 } catch (Exception e) {
-                        trashcan = br.readLine();
+                        trashcan = sc.next();
                         System.out.println("Please introduce a valid option.");
                 }
             }while(true);
@@ -228,7 +228,7 @@ public class menu {
         p.setName(name);
         
         System.out.print("Surname: "); 
-        String surname = bf.readLine();
+        String surname = sc.next();
         p.setSurname(surname);
         
         System.out.print("Medical card number: "); 
@@ -236,7 +236,7 @@ public class menu {
         Boolean validMedNumber = false;
         do{
             try {
-                medCardNumber = br.read(); 
+                medCardNumber = sc.nextInt(); 
                 validMedNumber = true;
             }catch(Exception e) {
                     System.out.println("Please introduce a valid medical card number which only contains numbers");
@@ -245,7 +245,7 @@ public class menu {
         p.setMedical_card_number(medCardNumber);
 
         System.out.print("Gender: ");
-        String gender = bf.readLine();   
+        String gender = sc.next();  
         do{
             if (gender.equalsIgnoreCase("male")) {
                     gender = "Male";
@@ -253,13 +253,13 @@ public class menu {
                     gender = "Female";
             } else{
                  System.out.print("Not a valid gender. Please introduce a gender (Male or Female): ");
-                 gender = bf.readLine();
+                 gender = sc.next();
             }
         }while (!(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female")));
         p.setGender(gender);
         
         System.out.print("Date of birth [yyyy-mm-dd]: ");	
-        String birthdate = bf.readLine();
+        String birthdate = sc.next();
         Date bdate; 
         try {
             bdate = Date.valueOf(birthdate);
@@ -268,25 +268,25 @@ public class menu {
             } else {
                 do {
                     System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");
-                    birthdate = bf.readLine();
+                    birthdate = sc.next();
                     bdate = Date.valueOf(birthdate);
-                } while ((!(bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now()))));
+                } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || (!bdate.equals(Date.valueOf(LocalDate.now()))));
                 p.setDob(bdate);
             }
         } catch (Exception e) {
             int b=0;
             do {	
                 System.out.print("Please introduce a valid date format [yyyy-mm-dd]: ");
-                birthdate = bf.readLine();
+                birthdate = sc.next();
                 bdate = Date.valueOf(birthdate);
                 if (bdate.before(Date.valueOf(LocalDate.now())) || bdate.equals(Date.valueOf(LocalDate.now()))) {
                         p.setDob(bdate);
                 } else {
                     do {
                         System.out.print("Please introduce a valid date [yyyy-mm-dd]: ");							
-                        birthdate = bf.readLine();
+                        birthdate = sc.next();
                         bdate = Date.valueOf(birthdate);
-                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || bdate.equals(Date.valueOf(LocalDate.now())));
+                    } while ((!bdate.before(Date.valueOf(LocalDate.now()))) || (!bdate.equals(Date.valueOf(LocalDate.now()))));
                     p.setDob(bdate);
                 }
                 b=1;
@@ -294,23 +294,23 @@ public class menu {
         }
 
         System.out.print("Address: ");				
-        String address = bf.readLine();
+        String address = sc.next();
         p.setAddress(address);
 
         System.out.print("Email: ");			
-        String email = bf.readLine();
+        String email = sc.next();
         p.setEmail(email);
         
         System.out.print("Diagnosis: "); 
-        String diagnosis = bf.readLine();
+        String diagnosis = sc.next();
         p.setDiagnosis(diagnosis);
         
         System.out.print("Allergies: "); 
-        String allergies = bf.readLine();
+        String allergies = sc.next();
         p.setAllergies(allergies);
         
         System.out.print("Bitalino MACAddress: ");				
-        String mac = bf.readLine();
+        String mac = sc.next();
         p.setMacAddress(mac);
         
         System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
@@ -328,7 +328,7 @@ public class menu {
     
 
     private static Patient selectPatient(BufferedReader br, PrintWriter pw) throws Exception{
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         //Show list with all patients.
         List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(br);
         for(int i =0;i<CompletePatientList.size();i++){
@@ -342,7 +342,7 @@ public class menu {
             System.out.println(patientList.toString());
             System.out.println("Enter the medical card number of the chosen patient: ");
             try{
-                medCard = bf.read();
+                medCard = sc.nextInt();
             }catch(Exception ex){
                 System.out.println("Not a valid medical card number ONLY NUMBERS");
             }
@@ -354,7 +354,7 @@ public class menu {
 
     
     private static void deletePatient(BufferedReader br, PrintWriter pw) throws Exception {
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         //Show list with all patients.
         List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(br);
         for(int i =0;i<CompletePatientList.size();i++){
@@ -362,30 +362,30 @@ public class menu {
         }
         //Chose a Patient to delete
         System.out.println("Introduce de medical card number of the patient to delete: ");
-        String medcard = bf.readLine();
+        String medcard = sc.next();
         pw.println("Medical Card= " + medcard);
     }
     
 
     public static void createDoctor(BufferedReader br, PrintWriter pw) throws Exception{
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         Doctor d = new Doctor();
 
         System.out.println("Please, input the doctor info:");
         System.out.print("Name: ");
-        String name = bf.readLine();
+        String name = sc.next();
         d.setDname(name); 
 
         System.out.print("Surname: ");
-        String surname = bf.readLine();
+        String surname = sc.next();
         d.setDsurname(surname);
         
         System.out.print("Email: ");
-        String email = bf.readLine();
+        String email = sc.next();
         d.setDemail(email);
         
         System.out.print("Id: ");
-        int id = bf.read();
+        int id = sc.nextInt();
         d.setDoctorId(id);
         
         System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
@@ -401,7 +401,7 @@ public class menu {
     
     
     private static void showSignals (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         //Show list with all signals
         String [] signalFilenames = utilities.CommunicationWithServer.ShowSignals(br, pw, p);
         List<String> completeSignalList = new ArrayList();
@@ -415,21 +415,21 @@ public class menu {
         while(signalList.isEmpty()){
             System.out.println(signalList.toString());
             System.out.println("Introduce filename of the signal:");
-            String signalName = bf.readLine();
+            String signalName = sc.next();
             pw.println(signalName);
             signal = utilities.CommunicationWithServer.receiveSignal(br);
         }
     }
     
     private static void editPatient (PrintWriter pw, Patient p) throws Exception{
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         int option=1;
         String update;
                  
         while(option != 0) {
             System.out.println("Choose an option[0-2]:");
             System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies");
-            option = bf.read();
+            option = sc.nextInt();
             
             switch(option) {
                 case 0:
@@ -437,14 +437,14 @@ public class menu {
                     break;
                 case 1:
                         System.out.println("Write diagnosis:");
-                        update = bf.readLine();
+                        update = sc.next();
                         pw.println("Update diagnosis");
                         p.setDiagnosis(update);
                         utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
                 case 2:
                         System.out.println("Write Allergies:");
-                        update = bf.readLine();
+                        update = sc.next();
                         pw.println("Update allergies");
                         p.setAllergies(update);
                         utilities.CommunicationWithServer.sendPatient(pw, p);
@@ -457,10 +457,10 @@ public class menu {
     }
     
     private static void updateMacAddress (PrintWriter pw, Patient p) throws Exception{
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+       Scanner sc = new Scanner (System.in);
         String update;
         System.out.println("Write Bitalino MacAddress:");
-        update = bf.readLine();
+        update = sc.next();
         pw.println("Update Bitalino MacAddress");
         p.setMacAddress(update);
         utilities.CommunicationWithServer.sendPatient(pw, p);
