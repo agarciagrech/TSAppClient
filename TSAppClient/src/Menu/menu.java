@@ -104,7 +104,8 @@ public class menu {
     }
     
     
-    public static void patientMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader bf, PrintWriter pw, int userId) throws Exception{
+    public static void patientMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader br, PrintWriter pw, int userId) throws Exception{
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         String trashcan;
         int option=0;
         do{
@@ -127,7 +128,7 @@ public class menu {
             switch (option) {
                 case 0:
                     System.out.println("Thank you for using our system");
-                    utilities.CommunicationWithServer.ReleaseResources(pw, bf);
+                    utilities.CommunicationWithServer.ReleaseResources(pw, br);
                     utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                     break;
                 case 1:
@@ -140,11 +141,11 @@ public class menu {
                     break;
                 case 3:
                     System.out.println("Here you can consult all your signals");
-                    showSignals(bf, pw, selectPatient(bf, pw));	
+                    showSignals(br, pw, selectPatient(br, pw));	
                     break;
                 case 4:
                     System.out.println("Change BITalino MAC address");
-                    updateMacAddress(bf, pw, patient);
+                    updateMacAddress(pw, patient);
                     break;
                 default:
                     System.out.println("Not a valid option.");
@@ -154,7 +155,8 @@ public class menu {
     }
         
         
-    private static void doctorMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader bf, PrintWriter pw) throws Exception {
+    private static void doctorMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader br, PrintWriter pw) throws Exception {
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         String trashcan;
         int option=0;
         do{
@@ -177,12 +179,12 @@ public class menu {
             switch(option) {
             case 0:
                 System.out.println("Thank you for using our system");
-                utilities.CommunicationWithServer.ReleaseResources(pw, bf);
+                utilities.CommunicationWithServer.ReleaseResources(pw, br);
                 utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                 break;
             case 1: 
                 System.out.println("Register a new Doctor");
-                createDoctor(bf, pw);
+                createDoctor(br, pw);
                 break;
             case 2:
                 System.out.println("See list of all my patients");
@@ -190,15 +192,15 @@ public class menu {
                 break;
             case 3:
                 System.out.println("Edit Patient");
-                editPatient(bf, pw, selectPatient(bf, pw));
+                editPatient(pw, selectPatient(br, pw));
                 break;
             case 4:
                 System.out.println("Consult recordings of a patient");
-                showSignals(bf, pw, selectPatient(bf, pw));
+                showSignals(br, pw, selectPatient(br, pw));
                 break;
             case 5:
                 System.out.println("Delete Patient");
-                deletePatient(bf, pw);
+                deletePatient(br, pw);
                 break;
             default:
                 System.out.println("Not a valid option.");
@@ -318,6 +320,7 @@ public class menu {
     
 
     private static Patient selectPatient(BufferedReader br, PrintWriter pw) throws Exception{
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         //Show list with all patients.
         List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(br);
         for(int i =0;i<CompletePatientList.size();i++){
@@ -331,7 +334,7 @@ public class menu {
             System.out.println(patientList.toString());
             System.out.println("Enter the medical card number of the chosen patient: ");
             try{
-                medCard = br.read();
+                medCard = bf.read();
             }catch(Exception ex){
                 System.out.println("Not a valid medical card number ONLY NUMBERS");
             }
@@ -343,6 +346,7 @@ public class menu {
 
     
     private static void deletePatient(BufferedReader br, PrintWriter pw) throws Exception {
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         //Show list with all patients.
         List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(br);
         for(int i =0;i<CompletePatientList.size();i++){
@@ -350,29 +354,30 @@ public class menu {
         }
         //Chose a Patient to delete
         System.out.println("Introduce de medical card number of the patient to delete: ");
-        String medcard = br.readLine();
+        String medcard = bf.readLine();
         pw.println("Medical Card= " + medcard);
     }
     
 
     public static void createDoctor(BufferedReader br, PrintWriter pw) throws Exception{
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         Doctor d = new Doctor();
 
         System.out.println("Please, input the doctor info:");
         System.out.print("Name: ");
-        String name = br.readLine();
+        String name = bf.readLine();
         d.setDname(name); 
 
         System.out.print("Surname: ");
-        String surname = br.readLine();
+        String surname = bf.readLine();
         d.setDsurname(surname);
         
         System.out.print("Email: ");
-        String email = br.readLine();
+        String email = bf.readLine();
         d.setDemail(email);
         
         System.out.print("Id: ");
-        int id = br.read();
+        int id = bf.read();
         d.setDoctorId(id);
         
         System.out.println("Let's proceed with the registration, the username and password will be autogenerated by the system:");
@@ -388,6 +393,7 @@ public class menu {
     
     
     private static void showSignals (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         //Show list with all signals
         String [] signalFilenames = utilities.CommunicationWithServer.ShowSignals(br, pw, p);
         List<String> completeSignalList = new ArrayList();
@@ -401,20 +407,21 @@ public class menu {
         while(signalList.isEmpty()){
             System.out.println(signalList.toString());
             System.out.println("Introduce filename of the signal:");
-            String signalName = br.readLine();
+            String signalName = bf.readLine();
             pw.println(signalName);
             signal = utilities.CommunicationWithServer.receiveSignal(br);
         }
     }
     
-    private static void editPatient (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
+    private static void editPatient (PrintWriter pw, Patient p) throws Exception{
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         int option=1;
         String update;
                  
         while(option != 0) {
             System.out.println("Choose an option[0-2]:");
             System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies");
-            option = br.read();
+            option = bf.read();
             
             switch(option) {
                 case 0:
@@ -422,18 +429,16 @@ public class menu {
                     break;
                 case 1:
                         System.out.println("Write diagnosis:");
-                        update = br.readLine();
+                        update = bf.readLine();
                         pw.println("Update diagnosis");
                         p.setDiagnosis(update);
-                        //pw.println(update);
                         utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
                 case 2:
                         System.out.println("Write Allergies:");
-                        update = br.readLine();
+                        update = bf.readLine();
                         pw.println("Update allergies");
                         p.setAllergies(update);
-                        //pw.println(update);
                         utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
                 default:
@@ -443,13 +448,13 @@ public class menu {
         }
     }
     
-    private static void updateMacAddress (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
+    private static void updateMacAddress (PrintWriter pw, Patient p) throws Exception{
+        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
         String update;
         System.out.println("Write Bitalino MacAddress:");
-        update = br.readLine();
+        update = bf.readLine();
         pw.println("Update Bitalino MacAddress");
         p.setMacAddress(update);
-        //pw.println(update);      
         utilities.CommunicationWithServer.sendPatient(pw, p);
     }
 }
