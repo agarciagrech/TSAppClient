@@ -45,7 +45,9 @@ public class CommunicationWithServer {
     }
     
     public static void sendPatient(PrintWriter pw,Patient patient) {
+        System.out.println("in send patient");
         pw.println(patient.toString());
+        
     }
     
     public static void sendSignal(PrintWriter printWriter, Signal signal) {
@@ -203,11 +205,14 @@ public class CommunicationWithServer {
     }
     
     public static User receiveUser (BufferedReader br){
+        System.out.println("in receive user");
         User u = new User();
         try {
         String line = br.readLine();
+        System.out.println(line);
         line=line.replace("{", "");
         line=line.replace("User", "");
+        line=line.replace("}", "");
         String[] atribute = line.split(",");
         for (int i =0;i <atribute.length; i++){
             String[] data2 = atribute[i].split("=");
@@ -229,6 +234,7 @@ public class CommunicationWithServer {
                 }
             }
         }
+            System.out.println(u.toString());
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
