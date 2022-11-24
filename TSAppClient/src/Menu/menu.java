@@ -40,7 +40,7 @@ public class menu {
             OutputStream outputStream = socket.getOutputStream();
             PrintWriter printWriter = new PrintWriter (outputStream,true);
             BufferedReader bf = new BufferedReader (new InputStreamReader (inputStream));
-            BufferedReader br = new BufferedReader (new InputStreamReader (System.in));
+            Scanner sc = new Scanner (System.in);
             
             String trashcan;
             int choice=1;
@@ -51,22 +51,30 @@ public class menu {
                     System.out.println("1. Register");
                     System.out.println("2. Login");
                     System.out.println("0. Exit");
-                    choice = bf.read();
-                    printWriter.println(choice);
+                    choice = sc.nextInt();
+                    System.out.println(choice);
+                    printWriter.print(choice);
+                    System.out.println("after pw");
                     switch(choice) {
+                        case 0:
+                            utilities.CommunicationWithServer.ReleaseResources(printWriter, br);
+                            utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                         case 1:
-                            
+                            System.out.println("inside switch 1");
                             register(bf, printWriter);
                             break;
                         case 2:
+                            System.out.println("inside switch 2");
                             login(socket, inputStream, outputStream, bf, printWriter);
                             break;
+                        default:
+                            System.out.println("Please introduce a valid option.");
                     }
                 } catch (Exception e) {
-                        trashcan = bf.readLine();
+                        trashcan = br.readLine();
                         System.out.println("Please introduce a valid option.");
                 }
-            }while(choice != 0);
+            }while(true);
         } catch (IOException ex) {
             Logger.getLogger(menu.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -105,22 +113,22 @@ public class menu {
     
     
     public static void patientMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader br, PrintWriter pw, int userId) throws Exception{
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         String trashcan;
         int option=0;
         do{
             int a = 0;
             
-            Patient patient = utilities.CommunicationWithServer.receivePatient(bf);
+            Patient patient = utilities.CommunicationWithServer.receivePatient(br);
             System.out.println("Hellos Mr/Ms "+patient.getSurname());
             System.out.println("Choose an option [0-3]:"
                             + "\n1. Start recording \n2. Stop recording \n3. Consult my recordings \n4. Change BITalino MAC address \n0.Exit");
             do {
                 try {
-                    option = bf.read();
+                    option = sc.nextInt();
                     a = 1;
                 } catch (Exception e) {
-                    trashcan = bf.readLine();
+                    trashcan = sc.next();
                     System.out.println("Please select a valid option.");
                 }
             } while (a==0);
@@ -155,8 +163,8 @@ public class menu {
     }
         
         
-    private static void doctorMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader br, PrintWriter pw) throws Exception {
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+    private static void doctorMenu(Socket socket, InputStream inputStream, OutputStream outputStream, BufferedReader bf, PrintWriter pw) throws Exception {
+        Scanner sc = new Scanner (System.in);
         String trashcan;
         int option=0;
         do{
@@ -168,10 +176,10 @@ public class menu {
             System.out.println("\n1.Register a new Doctor \n2. See list of all my patients \n3. Edit Patient \n4. Consult recordings of a patient \n 0. Exit");
             do {
                 try {
-                    option = bf.read();
+                    option = sc.nextInt();
                     a = 1;
                 } catch (Exception e) {
-                    trashcan = bf.readLine();
+                    trashcan = sc.next();
                     System.out.println("Please select a valid option.");
                 }
             } while (a==0);
@@ -179,12 +187,12 @@ public class menu {
             switch(option) {
             case 0:
                 System.out.println("Thank you for using our system");
-                utilities.CommunicationWithServer.ReleaseResources(pw, br);
+                utilities.CommunicationWithServer.ReleaseResources(pw, bf);
                 utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
                 break;
             case 1: 
                 System.out.println("Register a new Doctor");
-                createDoctor(br, pw);
+                createDoctor(bf, pw);
                 break;
             case 2:
                 System.out.println("See list of all my patients");
@@ -192,15 +200,15 @@ public class menu {
                 break;
             case 3:
                 System.out.println("Edit Patient");
-                editPatient(pw, selectPatient(br, pw));
+                editPatient(pw, selectPatient(bf, pw));
                 break;
             case 4:
                 System.out.println("Consult recordings of a patient");
-                showSignals(br, pw, selectPatient(br, pw));
+                showSignals(bf, pw, selectPatient(bf, pw));
                 break;
             case 5:
                 System.out.println("Delete Patient");
-                deletePatient(br, pw);
+                deletePatient(bf, pw);
                 break;
             default:
                 System.out.println("Not a valid option.");
@@ -211,12 +219,12 @@ public class menu {
 
     
     public static Patient createPatient (BufferedReader br, PrintWriter pw) throws NotBoundException, Exception {
-        BufferedReader bf = new BufferedReader (new InputStreamReader (System.in));
+        Scanner sc = new Scanner (System.in);
         Patient p = new Patient();
 
         System.out.println("Please, input the patient info:");
         System.out.print("Name: "); 
-        String name = bf.readLine();
+        String name = sc.next();
         p.setName(name);
         
         System.out.print("Surname: "); 
