@@ -292,7 +292,7 @@ public class CommunicationWithServer {
             for (int i = 0; i < frame.length; i++) {
                 pw.println(frame[i].analog[0]);
                 System.out.println(frame[i].analog[0]);
-                //ecg_vals.add(frame[i].analog[0]);
+                ecg_vals.add(frame[i].analog[0]);
             }
             pw.println("END OF ECG");
 
@@ -301,12 +301,12 @@ public class CommunicationWithServer {
             for (int a = 0; a < frame.length; a++) {
                 pw.println(frame[a].analog[1]);
                 System.out.println(frame[a].analog[1]);
-                //emg_vals.add(frame[a].analog[1]);
+                emg_vals.add(frame[a].analog[1]);
             }
             pw.println("END OF EMG");
 
             //pw.println("ECG: " + ecg_vals.toString() + " // " + "EMG: " + emg_vals.toString());
-            pw.println("END");
+            //pw.println("END");
 
             bitalino.stop();
 
@@ -316,13 +316,14 @@ public class CommunicationWithServer {
             String month=Integer.toString(c.get(Calendar.MONTH));
             String year=Integer.toString(c.get(Calendar.YEAR));
 
-            pw.println("ECG filename= ECG"+ day+month+year );
-            pw.println("EMG filename= EMG"+ day+month+year );
+            
 
             String ruta = "../TSAppClient/ECG"+day+month+year+".txt";
             String ruta2 = "../TSAppClient/EMG"+day+month+year+".txt";
-            String contenido = Arrays.toString(s.getECG_values());
-            String contenido2 = Arrays.toString(s.getEMG_values());
+            //String contenido = Arrays.toString(s.getECG_values());
+            String contenido = ecg_vals.toString();
+            String contenido2 = emg_vals.toString();
+            //String contenido2 = Arrays.toString(s.getEMG_values());
             File file = new File(ruta);
             File file2 = new File(ruta2);
             if (!file.exists()) {
@@ -339,6 +340,9 @@ public class CommunicationWithServer {
             bwEMG.write(contenido2);
             bwECG.close();
             bwEMG.close();
+            
+            //pw.println("ECG"+ day+month+year );
+            //pw.println("EMG"+ day+month+year );
 
             System.out.println("Ok");
         } catch (BITalinoException ex) {
