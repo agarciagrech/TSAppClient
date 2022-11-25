@@ -126,6 +126,7 @@ public class menu {
             do {
                 try {
                     option = sc.nextInt();
+                    pw.println(option);
                     a = 1;
                 } catch (Exception e) {
                     trashcan = sc.next();
@@ -469,7 +470,6 @@ public class menu {
         String update;
         System.out.println("Write Bitalino MacAddress:");
         update = sc.next();
-        pw.println("Update Bitalino MacAddress");
         p.setMacAddress(update);
         utilities.CommunicationWithServer.sendPatient(pw, p);
     }
