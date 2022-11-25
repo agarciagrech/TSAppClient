@@ -150,7 +150,7 @@ public class menu {
                     break;
                 case 3:
                     System.out.println("Here you can consult all your signals");
-                    showSignals(br, pw, selectPatient(br, pw));	
+                    showSignals(br, pw);	
                     break;
                 case 4:
                     System.out.println("Change BITalino MAC address");
@@ -207,7 +207,7 @@ public class menu {
                 break;
             case 4:
                 System.out.println("Consult recordings of a patient");
-                showSignals(bf, pw, selectPatient(bf, pw));
+                showSignals(bf, pw);
                 break;
             case 5:
                 System.out.println("Delete Patient");
@@ -409,25 +409,28 @@ public class menu {
     }
     
     
-    private static void showSignals (BufferedReader br, PrintWriter pw, Patient p) throws Exception{
+    private static void showSignals (BufferedReader br, PrintWriter pw) throws Exception{
         Scanner sc = new Scanner (System.in);
         //Show list with all signals
-        String [] signalFilenames = utilities.CommunicationWithServer.ShowSignals(br, pw, p);
-        List<String> completeSignalList = new ArrayList();
-        for(int i =0;i<signalFilenames.length;i++){
-            completeSignalList.add(signalFilenames[i]);
-            System.out.println(completeSignalList.get(i));
+        List<String> signalFilenames = utilities.CommunicationWithServer.ShowSignals(br, pw);
+        System.out.println(signalFilenames.size());
+        
+        for(int i=0; i<signalFilenames.size();i++){
+            System.out.println(signalFilenames.get(i));
         }
+        System.out.println("hola");
         //Choose a signal
+        /*
         List<String> signalList = new ArrayList<>();
         Signal signal = null;
-        while(signalList.isEmpty()){
-            System.out.println(signalList.toString());
+        while(signalList.isEmpty()){*/
+            //System.out.println(signalList.toString());
             System.out.println("Introduce filename of the signal:");
             String signalName = sc.next();
             pw.println(signalName);
-            signal = utilities.CommunicationWithServer.receiveSignal(br);
-        }
+            Signal signal = utilities.CommunicationWithServer.receiveSignal(br);
+            System.out.println(signal.toString());
+        //}
     }
     
     private static void editPatient (PrintWriter pw, Patient p) throws Exception{

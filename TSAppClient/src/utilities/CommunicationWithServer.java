@@ -363,16 +363,14 @@ public class CommunicationWithServer {
     
     
     // This method is going to return the filenames of all the signals recorded:
-    public static String[] ShowSignals(BufferedReader bf, PrintWriter pw, Patient p){
+    public static List<String> ShowSignals(BufferedReader bf, PrintWriter pw){
         try {
-            String[] filenames = null;
-            // Pedimos al server que nos envie la lista de señales:
-            pw.println("Send Signals");
-            pw.println(p.getMedical_card_number());
+            List<String> filenames = new ArrayList();
+            
             // VOY A ASUMIR QUE SE ENVIAN LOS FILENAME SEPARADOS POR \n
-            String line = bf.readLine();
-            while ((line = bf.readLine()) != null) {
-                filenames =line.split("\n");
+            int size = Integer.parseInt(bf.readLine());
+            for (int i=0; i<size; i++){
+                filenames.add(bf.readLine());
             }
             return filenames;
         } catch (IOException ex) {
