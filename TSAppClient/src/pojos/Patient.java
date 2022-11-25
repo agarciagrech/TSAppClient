@@ -6,8 +6,11 @@
 package pojos;
 
 import java.io.Serializable;
+import java.rmi.NotBoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -106,8 +109,14 @@ public class Patient implements Serializable{
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String email) throws NotBoundException {
+        Pattern pattern = Pattern.compile("([a-z0-9]+(\\.?[a-z0-9])*)+@(([a-z]+)\\.([a-z]+))+");
+        Matcher mather = pattern.matcher(email);
+        if (mather.find() == true) {
+            this.email = email;
+        } else {
+            throw new NotBoundException("Not valid email");
+        }
     }
 
     public String getDiagnosis() {
@@ -130,8 +139,10 @@ public class Patient implements Serializable{
         return gender;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setGender(String gender) throws NotBoundException {
+        
+            this.gender = gender;
+        
     }
 
     public Integer getUserId() {

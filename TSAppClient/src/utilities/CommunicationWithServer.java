@@ -8,6 +8,7 @@ package utilities;
 import BITalino.*;
 import java.io.*;
 import java.net.Socket;
+import java.rmi.NotBoundException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +48,7 @@ public class CommunicationWithServer {
     
     public static void sendPatient(PrintWriter pw,Patient patient) {
         System.out.println("in send patient");
-        //System.out.println(patient.toString()); //SE MANDA BIEN
+        System.out.println(patient.toString()); //SE MANDA BIEN
         pw.println(patient.toString());
         
     }
@@ -60,7 +61,7 @@ public class CommunicationWithServer {
         printWriter.println(user.toString());
     }
     
-    public static Patient receivePatient(BufferedReader bf){
+    public static Patient receivePatient(BufferedReader bf) {
         Patient p = new Patient();
         
          try{
@@ -86,6 +87,8 @@ public class CommunicationWithServer {
                             p.setSurname(data2[j+1]);
                             break;
                         case "dob":
+                            //Date dob = java.sql.Date.valueOf(data2[j+1]);
+                            //p.setDob(dob);
                             try {
                                 p.setDob(format.parse(data2[j+1]));
                             } catch (ParseException ex) {
@@ -122,11 +125,15 @@ public class CommunicationWithServer {
             }
             System.out.println("Patient received:");
             System.out.println(p.toString());
+             return p;
         }catch(IOException ex){
-            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+            return  null;
+        }catch(NotBoundException e){
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, e);
+             return null;
         }
         
-        return p; 
+        
                            
                         
                  
