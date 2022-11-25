@@ -34,7 +34,7 @@ public class Patient implements Serializable{
     }
 
     
-    public Patient(Integer medical_card_number, String name, String surname, Date dob, String address, String email, String diagnosis, String allergies, String gender, Integer userId, String macAddress) {
+    public Patient(String name, String surname, Integer medical_card_number, Date dob, String address, String email, String diagnosis, String allergies, String gender, Integer userId, String macAddress) {
         this.medical_card_number = medical_card_number;
         this.name = name;
         this.surname = surname;

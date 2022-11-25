@@ -116,7 +116,7 @@ public class menu {
         String trashcan;
         int option=0;
         Patient patient = utilities.CommunicationWithServer.receivePatient(br);
-        System.out.println("Hellos Mr/Ms "+patient.getSurname());
+        System.out.println("Hello Mr/Ms "+patient.getSurname());
         do{
             int a = 0;
             
@@ -168,7 +168,7 @@ public class menu {
         String trashcan;
         int option=0;
         Doctor doctor = utilities.CommunicationWithServer.receiveDoctor(bf);
-        System.out.println("Hellos Dr. " + doctor.getDsurname());
+        System.out.println("Hello Dr. " + doctor.getDsurname());
         do{
             int a = 0;
             
@@ -223,15 +223,7 @@ public class menu {
     public static Patient createPatient (BufferedReader br, PrintWriter pw) throws NotBoundException, Exception {
         Scanner sc = new Scanner (System.in);
         Patient p = new Patient();
-
-        System.out.println("Please, input the patient info:");
-        System.out.print("Name: "); 
-        String name = sc.next();
-        p.setName(name);
-        
-        System.out.print("Surname: "); 
-        String surname = sc.next();
-        p.setSurname(surname);
+         System.out.println("Please, input the patient info:");
         
         System.out.print("Medical card number: "); 
         Integer medCardNumber=1; 
@@ -245,6 +237,17 @@ public class menu {
             }
         }while (validMedNumber = false);
         p.setMedical_card_number(medCardNumber);
+
+       
+        System.out.print("Name: "); 
+        String name = sc.next();
+        p.setName(name);
+        
+        System.out.print("Surname: "); 
+        String surname = sc.next();
+        p.setSurname(surname);
+        
+       
 
         System.out.print("Gender: ");
         String gender = sc.next();  

@@ -47,6 +47,7 @@ public class CommunicationWithServer {
     
     public static void sendPatient(PrintWriter pw,Patient patient) {
         System.out.println("in send patient");
+        //System.out.println(patient.toString()); //SE MANDA BIEN
         pw.println(patient.toString());
         
     }
@@ -61,10 +62,12 @@ public class CommunicationWithServer {
     
     public static Patient receivePatient(BufferedReader bf){
         Patient p = new Patient();
-        try{
+        
+         try{
             String line = bf.readLine();
             line=line.replace("{", "");
             line=line.replace("Patient", "");
+            line=line.replace("}", "");
             String[] atribute = line.split(",");
             SimpleDateFormat  format = new SimpleDateFormat("dd/MM/yyyy"); 
         
@@ -73,7 +76,7 @@ public class CommunicationWithServer {
                 for (int j =0;j <data2.length - 1; j++){
                     data2[j]=data2[j].replace(" ", "");
                     switch(data2[j]){
-                        case "medical_card_number": 
+                         case "medical_card_number": 
                             p.setMedical_card_number(Integer.parseInt(data2[j+1]));
                             break;
                         case "name":
@@ -82,13 +85,16 @@ public class CommunicationWithServer {
                         case "surname":
                             p.setSurname(data2[j+1]);
                             break;
-                         case "dob":
+                        case "dob":
                             try {
                                 p.setDob(format.parse(data2[j+1]));
                             } catch (ParseException ex) {
                                 Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             break;
+                        
+                        
+                          
                         case "address": 
                             p.setAddress(data2[j+1]);
                             break;
@@ -104,7 +110,8 @@ public class CommunicationWithServer {
                         case "gender": 
                             p.setGender(data2[j+1]);
                             break;
-                        case "userId": 
+                        
+                         case "userId": 
                             p.setUserId(Integer.parseInt(data2[j+1]));
                             break;
                         case "macAddress": 
@@ -118,7 +125,11 @@ public class CommunicationWithServer {
         }catch(IOException ex){
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return p; 
+                           
+                        
+                 
     }
     
     
