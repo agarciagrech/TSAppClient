@@ -81,9 +81,17 @@ public class menu {
     }
        
     private static void register(BufferedReader br, PrintWriter pw) throws Exception {
-        
+        Scanner sc = new Scanner(System.in);
         System.out.println("Introduce your personal data: ");
         Patient p = createPatient(br, pw);
+        System.out.println("Here is a list of all the doctors:");
+        int size = Integer.parseInt(br.readLine());
+        for (int i=0;i<size;i++){
+            System.out.println(br.readLine());
+        }
+        System.out.println("Introduce the id of your doctor:");
+        int id = sc.nextInt();
+        pw.println(id);
     }
 
                   
@@ -203,7 +211,10 @@ public class menu {
                 break;
             case 3:
                 System.out.println("Edit Patient");
-                editPatient(pw, selectPatient(bf, pw));
+                utilities.CommunicationWithServer.receivePatientList(bf);
+                System.out.println("Introduce medcard of patient to update:");
+                int medcard = sc.nextInt();
+                editPatient(bf,pw, medcard);
                 break;
             case 4:
                 System.out.println("Consult recordings of a patient");
@@ -437,16 +448,17 @@ public class menu {
         //}
     }
     
-    private static void editPatient (PrintWriter pw, Patient p) throws Exception{
+    private static void editPatient (BufferedReader bf,PrintWriter pw, int medcard) throws Exception{
         Scanner sc = new Scanner (System.in);
         int option=1;
         String update;
-                 
+        pw.println(medcard);
+        Patient p = utilities.CommunicationWithServer.receivePatient(bf);
         while(option != 0) {
             System.out.println("Choose an option[0-2]:");
             System.out.println("\n0. Back \n1. Diagnosis \n2. Allergies");
             option = sc.nextInt();
-            
+            pw.println(option);
             switch(option) {
                 case 0:
                     option=0;
@@ -454,14 +466,12 @@ public class menu {
                 case 1:
                         System.out.println("Write diagnosis:");
                         update = sc.next();
-                        pw.println("Update diagnosis");
                         p.setDiagnosis(update);
                         utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
                 case 2:
                         System.out.println("Write Allergies:");
                         update = sc.next();
-                        pw.println("Update allergies");
                         p.setAllergies(update);
                         utilities.CommunicationWithServer.sendPatient(pw, p);
                         break;
