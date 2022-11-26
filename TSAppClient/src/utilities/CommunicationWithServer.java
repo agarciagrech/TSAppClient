@@ -177,6 +177,7 @@ public class CommunicationWithServer {
         Signal s = new Signal();
         try {
         String line = br.readLine();
+        //System.out.println(line);
         line=line.replace("{", "");
         line=line.replace("Signal", "");
         String[] atribute = line.split(",");
@@ -193,18 +194,18 @@ public class CommunicationWithServer {
                     case "ECG_values":
                         //no estoy segura de si están separados por una coma o un espacio
                         String[] separatedString = data2[j+1].split(",");
-                        int[] ECG = new int[separatedString.length];
+                        List<Integer> ECG = new ArrayList();
                         for(int k=0; k<separatedString.length; k++){
-                            ECG[k] = Integer.parseInt(separatedString[k]);
+                            ECG.add(k, Integer.parseInt(separatedString[k]));
                         }
                         s.setECG_values(ECG);
                         break;
 
                     case "EMG_values":
                         separatedString = data2[j+1].split(",");
-                        int[] EMG = new int[separatedString.length];
+                       List<Integer> EMG = new ArrayList();
                         for(int k=0; k<separatedString.length; k++){
-                            EMG[k] = Integer.parseInt(separatedString[k]);
+                            EMG.add(k, Integer.parseInt(separatedString[k]));
                         }
                         s.setEMG_values(EMG);
                         break;
@@ -221,6 +222,8 @@ public class CommunicationWithServer {
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.println("hola Recieve Signal");
+        System.out.println(s.toString());
         return s;
     }
     
@@ -368,7 +371,7 @@ public class CommunicationWithServer {
             List<String> filenames = new ArrayList();
             
             // VOY A ASUMIR QUE SE ENVIAN LOS FILENAME SEPARADOS POR \n
-            int size = Integer.parseInt(bf.readLine());
+            int size = Integer.parseInt(bf.readLine()); //aqui coge el size que se envia 
             for (int i=0; i<size; i++){
                 filenames.add(bf.readLine());
             }

@@ -12,14 +12,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class Signal {
     private Integer signalId;
-    private int[] ECG_values; 
-    private int[] EMG_values;
+    private List<Integer> ECG_values; 
+    private List<Integer> EMG_values;
     private Date startDate;
     private String ECGFilename;
     private String EMGFilename;
@@ -31,11 +32,11 @@ public class Signal {
     public Signal() {
     }
     
-    public int[] getECG_values() {
+    public List<Integer> getECG_values() {
         return ECG_values;
     }
 
-    public int[] getEMG_values() {
+    public List<Integer> getEMG_values() {
         return EMG_values;
     }
 
@@ -47,11 +48,11 @@ public class Signal {
         this.signalId = signalId;
     }
 
-    public void setECG_values(int[] ECG_values) {
+    public void setECG_values(List<Integer> ECG_values) {
         this.ECG_values = ECG_values;
     }
 
-    public void setEMG_values(int[] EMG_values) {
+    public void setEMG_values(List<Integer> EMG_values) {
         this.EMG_values = EMG_values;
     }
 
@@ -98,7 +99,7 @@ public class Signal {
         try {
             CreateECGFilename(patientName);
             String ruta = "../TSAppClient/"+this.ECGFilename;
-            String contenido = Arrays.toString(this.ECG_values);
+            String contenido = ECG_values.toString();
             File file = new File(ruta);
             if (!file.exists()) {
                 file.createNewFile();
@@ -125,7 +126,7 @@ public class Signal {
         try {
             CreateEMGFilename(patientName);
             String ruta = "../PatientTS/"+this.EMGFilename;
-            String contenido = Arrays.toString(this.EMG_values);
+            String contenido = EMG_values.toString();
             File file = new File(ruta);
             if (!file.exists()) {
                 file.createNewFile();
@@ -149,14 +150,7 @@ public class Signal {
     
     @Override
     public String toString() {
-        System.out.println("ECG");
-        for (int i=0; i<ECG_values.length; i++){
-            System.out.println(ECG_values[i]);
-        } 
-        System.out.println("EMG");
-        for (int i=0; i<EMG_values.length; i++){
-            System.out.println(EMG_values[i]);
-        } 
+        
         return "Signal{" + "signalId=" + signalId + ", ECG_values=" + ECG_values + ", EMG_values=" + EMG_values + ", startDate=" + startDate + '}';
     }
 }

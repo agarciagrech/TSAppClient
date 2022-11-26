@@ -31,7 +31,7 @@ import pojos.User;
 public class menu {
 
     public static InputStream console = (System.in);
-
+    
   
     public static void main(String[] args) throws Exception {
         try {
@@ -410,6 +410,7 @@ public class menu {
     
     
     private static void showSignals (BufferedReader br, PrintWriter pw) throws Exception{
+        //int size = Integer.parseInt(br.readLine());
         Scanner sc = new Scanner (System.in);
         //Show list with all signals
         List<String> signalFilenames = utilities.CommunicationWithServer.ShowSignals(br, pw);
@@ -427,9 +428,12 @@ public class menu {
             //System.out.println(signalList.toString());
             System.out.println("Introduce filename of the signal:");
             String signalName = sc.next();
+           // Signal s = db.jdbc.SQLiteSignalManager.selectSignalByName
             pw.println(signalName);
-            Signal signal = utilities.CommunicationWithServer.receiveSignal(br);
-            System.out.println(signal.toString());
+           
+            String signal = br.readLine();
+            System.out.println(signal);
+            
         //}
     }
     
