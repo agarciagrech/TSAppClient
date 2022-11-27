@@ -183,7 +183,7 @@ public class menu {
             
             
             System.out.println("Choose an option[0-2]:");
-            System.out.println("\n1.Register a new Doctor \n2. See list of all my patients \n3. Edit Patient \n4. Consult recordings of a patient \n5. Delete a patient \n 0. Exit");
+            System.out.println("\n1.Register a new Doctor \n2. See list of all my patients \n3. Edit Patient \n4. Consult recordings of a patient  \n 0. Exit");
             do {
                 try {
                     option = sc.nextInt();
@@ -226,11 +226,11 @@ public class menu {
                 break;
             case 5:
                 System.out.println("Delete Patient");
-                utilities.CommunicationWithServer.receivePatientList(bf);
+                /*utilities.CommunicationWithServer.receivePatientList(bf);
                 System.out.println("Introduce medcard of patient to delete:");
                 int medcard3 = sc.nextInt();
-                pw.println(medcard3);
-                deletePatient(bf, pw);
+                //pw.println(medcard3);
+                deletePatient(bf, pw, medcard3);*/
                 break;
             default:
                 System.out.println("Not a valid option.");
@@ -381,17 +381,21 @@ public class menu {
     }
 
     
-    private static void deletePatient(BufferedReader br, PrintWriter pw) throws Exception {
-        Scanner sc = new Scanner (System.in);
+    private static void deletePatient(BufferedReader br, PrintWriter pw, Integer medCard) throws Exception {
+        //Scanner sc = new Scanner (System.in);
         //Show list with all patients.
-        List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(br);
+        //List<String> CompletePatientList = utilities.CommunicationWithServer.receivePatientList(br);
         /*for(int i =0;i<CompletePatientList.size();i++){
                 System.out.println(CompletePatientList.get(i));
         }
+        
         //Chose a Patient to delete
         System.out.println("Introduce de medical card number of the patient to delete: ");
         String medcard = sc.next();
         pw.println("Medical Card= " + medcard);*/
+        pw.println(medCard);
+        //Patient p = utilities.CommunicationWithServer.receivePatient(br);
+        
     }
     
 
