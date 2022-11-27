@@ -218,6 +218,10 @@ public class menu {
                 break;
             case 4:
                 System.out.println("Consult recordings of a patient");
+                utilities.CommunicationWithServer.receivePatientList(bf);
+                System.out.println("Introduce medcard of patient to update:");
+                int medcard2 = sc.nextInt();
+                pw.println(medcard2);
                 showSignals(bf, pw);
                 break;
             case 5:
