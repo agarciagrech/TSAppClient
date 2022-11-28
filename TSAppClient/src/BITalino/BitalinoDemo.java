@@ -23,8 +23,8 @@ public class BitalinoDemo {
         Frame[] frame;
         BITalino bitalino = null;
         Signal s = new Signal();
-        int[] ecg_values = new int[10];
-        int[] emg_values = new int[10];
+        List<Integer> ecg_values = new ArrayList();
+        List<Integer>emg_values =  new ArrayList();
  
         try {
             bitalino = new BITalino();
@@ -57,8 +57,8 @@ public class BitalinoDemo {
 
                 //Store the samples --> preguntar si se guarda el fichero 
                 for (int i = 0; i < frame.length; i++) {
-                    ecg_values[i]=frame[i].analog[0];
-                    emg_values[i]=frame[i].analog[1];
+                    ecg_values.add(i, frame[i].analog[0]);
+                    emg_values.add(i, frame[i].analog[0]);
                    // System.out.println(" seq: " + frame[i].seq + " "
                             //+ frame[i].analog[0] + " ");
                 }
@@ -88,8 +88,8 @@ public class BitalinoDemo {
             //ruta + signal_name + date ".txt"
             String ruta = "C:/Users/agarc/OneDrive/Desktop/TSApp/filename.txt";
             String ruta2 = "C:/Users/   /OneDrive/Desktop/TSApp/filename2.txt";
-            String contenido = Arrays.toString(s.getECG_values());
-            String contenido2 = Arrays.toString(s.getEMG_values());
+            String contenido = s.getECG_values().toString();
+            String contenido2 =  s.getEMG_values().toString();
             File file = new File(ruta);
             File file2 = new File(ruta2);
             // Si el archivo no existe es creado
