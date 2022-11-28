@@ -227,7 +227,16 @@ public class menu {
                 break;
             case 5:
                 System.out.println("Delete Patient");
-                deletePatient(bf, pw);
+                utilities.CommunicationWithServer.receivePatientList(bf);
+                System.out.println("Introduce medcard of patient to update:");
+                int medcard5 = sc.nextInt();
+                pw.println(medcard5);
+                 String line = bf.readLine();
+                if (line.equalsIgnoreCase("success")){
+                    System.out.println("Patient succesfully deleted");
+                }else{
+                    System.out.println("Error with deleting");
+                }
                 break;
             default:
                 System.out.println("Not a valid option.");
@@ -388,7 +397,7 @@ public class menu {
         
         //Chose a Patient to delete
         System.out.println("Introduce de medical card number of the patient to delete: ");
-        String medcard = sc.next();
+        String medcard = sc.nextLine();
         pw.println(medcard);
         String line = br.readLine();
         if (line.equalsIgnoreCase("success")){
