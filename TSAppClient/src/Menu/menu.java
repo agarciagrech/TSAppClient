@@ -59,6 +59,7 @@ public class menu {
                         case 0:
                             utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
                             utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
+                            System.exit(0);
                         case 1:
                             System.out.println("inside switch 1");
                             register(bf, printWriter);
@@ -147,7 +148,7 @@ public class menu {
                     System.out.println("Thank you for using our system");
                     utilities.CommunicationWithServer.ReleaseResources(pw, br);
                     utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
-                    break;
+                    System.exit(0);
                 case 1:
                     System.out.println("Your going to record your ECG and EMG signals");
                     utilities.CommunicationWithServer.recordSignal(patient, pw);
@@ -200,8 +201,7 @@ public class menu {
                 System.out.println("Thank you for using our system");
                 utilities.CommunicationWithServer.ReleaseResources(pw, bf);
                 utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
-            
-                break;
+                System.exit(0);
             case 1: 
                 System.out.println("Register a new Doctor");
                 createDoctor(bf, pw);

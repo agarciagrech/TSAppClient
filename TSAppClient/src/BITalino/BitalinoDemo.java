@@ -55,7 +55,8 @@ public class BitalinoDemo {
 
                 System.out.println("size block: " + frame.length);
 
-                //Store the samples --> preguntar si se guarda el fichero 
+                //Store the samples --> preguntar si se guarda el fichero
+                
                 for (int i = 0; i < frame.length; i++) {
                     ecg_values.add(i, frame[i].analog[0]);
                     emg_values.add(i, frame[i].analog[0]);
