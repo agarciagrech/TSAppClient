@@ -38,6 +38,7 @@ public class CommunicationWithServer {
                 OutputStream outputStream = socket.getOutputStream();
                 PrintWriter printWriter = new PrintWriter(outputStream, true);
                 BufferedReader bf = new BufferedReader(new InputStreamReader(inputStream));
+                connected = true;
 
             } catch (IOException ex) {
                 connected = socket.isBound();
