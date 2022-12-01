@@ -32,20 +32,25 @@ public class CommunicationWithServer {
             System.out.println("Introduce your IP: ");
             String ip = br.readLine();
             try {
+                System.out.println(connected);
                 socket = new Socket(ip, 9000);
 
                 InputStream inputStream = socket.getInputStream();
                 OutputStream outputStream = socket.getOutputStream();
                 PrintWriter printWriter = new PrintWriter(outputStream, true);
                 BufferedReader bf = new BufferedReader(new InputStreamReader(inputStream));
-                connected = true;
-
+                
+                connected = socket.isConnected();  
+                System.out.println(connected);
             } catch (IOException ex) {
-                connected = socket.isBound();
+                System.out.println("Dentro del catch");
+                
                 if (connected == false) {
                     System.out.println("Connection failed");
                 }
+                
             }
+            //connected = true;
         } while (!connected);
 
         return socket;
