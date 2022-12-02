@@ -57,8 +57,7 @@ public class menu {
                     System.out.println("after pw");
                     switch(choice) {
                         case 0:
-                            utilities.CommunicationWithServer.ReleaseResources(printWriter, bf);
-                            utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
+                            utilities.CommunicationWithServer.exitFromServer(printWriter, bf, inputStream, outputStream, socket);
                             System.exit(0);
                         case 1:
                             System.out.println("inside switch 1");
@@ -146,8 +145,7 @@ public class menu {
             switch (option) {
                 case 0:
                     System.out.println("Thank you for using our system");
-                    utilities.CommunicationWithServer.ReleaseResources(pw, br);
-                    utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
+                    utilities.CommunicationWithServer.exitFromServer(pw, br, inputStream, outputStream, socket);
                     System.exit(0);
                 case 1:
                     System.out.println("Your going to record your ECG and EMG signals");
@@ -199,8 +197,7 @@ public class menu {
             switch(option) {
             case 0:
                 System.out.println("Thank you for using our system");
-                utilities.CommunicationWithServer.ReleaseResources(pw, bf);
-                utilities.CommunicationWithServer.exitFromServer(inputStream, outputStream, socket);
+                utilities.CommunicationWithServer.exitFromServer(pw, bf, inputStream, outputStream, socket);
                 System.exit(0);
             case 1: 
                 System.out.println("Register a new Doctor");

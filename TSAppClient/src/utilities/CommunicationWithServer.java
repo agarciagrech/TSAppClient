@@ -17,10 +17,7 @@ import pojos.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-/**
- *
- * @author agarc
- */
+
 public class CommunicationWithServer {
 
     public static Socket connectToServer() throws IOException {
@@ -419,7 +416,13 @@ public class CommunicationWithServer {
         return patientList;
     }
 
-    public static void exitFromServer(InputStream inputStream, OutputStream outputStream, Socket socket) {
+    public static void exitFromServer(PrintWriter pw, BufferedReader br, InputStream inputStream, OutputStream outputStream, Socket socket) {
+        pw.close();
+        try {
+            br.close();
+        } catch (IOException ex) {
+            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             inputStream.close();
         } catch (IOException ex) {
@@ -435,15 +438,5 @@ public class CommunicationWithServer {
         } catch (IOException ex) {
             Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public static boolean ReleaseResources(PrintWriter pw, BufferedReader br) {
-        pw.close();
-        try {
-            br.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CommunicationWithServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
     }
 }
