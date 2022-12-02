@@ -29,7 +29,6 @@ public class Patient implements Serializable{
     private String diagnosis;
     private String allergies;
     private String gender;
-    //private Signal signal;
     private Integer userId;
     private String macAddress; 
 
